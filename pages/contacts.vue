@@ -58,36 +58,13 @@
             <v-icon class="mr-2">phone</v-icon>+7 (499) 311 67 71
           </a>
           <a class="mb-3 align-center display-flex" @click="$vuetify.goTo(`#map-0`)">
-            <v-icon class="mr-2">location_on</v-icon>АО «Си Эс Си ЛТД», 115230, г. Москва, Варшавское шоссе, д.47, кор.4, 14 этаж
+            <v-icon class="mr-2">location_on</v-icon>{{badReactionAddress}}
           </a>
           <a class="align-center display-flex" href="mailto:office@cscpharma.ru">
             <v-icon class="mr-2">email</v-icon>office@cscpharma.ru
           </a>
         </div>
 
-        <!-- <v-layout column class="mt-5">
-          <v-flex>
-            <h2 class="mb-4" data-aos="fade-in">Хотите сообщить о проблеме?</h2>
-            <p data-aos="fade-in">
-              ЗАО «Си Эс Си Лтд» собирает и анализирует информацию о нежелательных реакциях или отсутствии терапевтического эффекта лекарственного препарата, а также активно сотрудничает с регуляторными органами в этой области.
-              Если Вам стало известно о нежелательных реакциях или отсутствии терапевтического эффекта, возникших при применении препаратов компании ЗАО «Си Эс Си Лтд», пожалуйста, заполните форму сообщения, размещенную ниже,
-              Извещение о нежелательной реакции (НР) лекарственного средства или отсутствии ожидаемого терапевтического эффекта
-            </p>
-
-            <v-dialog v-model="dialog" persistent>
-              <v-btn
-                data-aos="fade-in"
-                class="mt-3 ml-0"
-                color="red"
-                outline
-                slot="activator"
-              >Сообщить о проблеме</v-btn>
-              <v-card>
-                <trouble-form v-bind:dialog.sync="dialog"/>
-              </v-card>
-            </v-dialog>
-          </v-flex>
-        </v-layout>-->
       </v-container>
     </section>
   </div>
@@ -113,6 +90,11 @@ export default {
         }
       ]
     };
+  },
+  computed:{
+    troubleContact(){
+      return this.contacts.find(item=>item)
+    }
   },
   data: () => ({
     dialog: false,
