@@ -1,0 +1,28 @@
+{
+    forms(where: { slug: "fluifort-granuly" }) {
+    title
+    pill {
+        title
+        img {
+        url
+        }
+        pilllink {
+        href
+        pharmacy {
+            name
+            img {
+            url
+            }
+        }
+        }
+        manufacturer {
+        title
+        description
+        mapMarkers
+        img {
+            url
+        }
+        }
+    }
+    }
+}

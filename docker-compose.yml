@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  nuxt:
+    build: .
+    container_name: cscfront
+    restart: always
+    ports:
+      - "3000:80"
+    command:
+      "npm run start"
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - nuxt
