@@ -1,11 +1,25 @@
-const pkg = require('./package')
+// const pkg = require('./package')
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 const axios = require('axios')
-const i18nExtensions = require('vue-i18n-extensions')
-const path = require('path')
+// const nuxti18n = require('nuxt-i18n')
+// console.log("TCL: nuxti18n", nuxti18n({
+//   locales: [{
+//       code: 'en',
+//       iso: 'en-US',
+//       // file: 'en.js'
+//     },
+//     {
+//       code: 'ru',
+//       iso: 'ru-RU',
+//       // file: 'ru.js'
+//     },
+//   ],
+//   defaultLocale: 'ru',
+// }))
+// const i18nExtensions = require('vue-i18n-extensions')
+// const path = require('path')
 const baseUrl = process.env.BASE_URL || "http://cscpharma.jelastic.regruhosting.ru"
 const imageBaseUrl = process.env.IMAGE_BASE_URL || "http://cscpharma.jelastic.regruhosting.ru"
-
 
 module.exports = {
   mode: 'universal',
@@ -69,7 +83,15 @@ module.exports = {
         }
       })
       // "http://localhost:8080/forms"
-      return aboutItems.concat(formsItems).concat(vacanciesItems)
+      const ruRoutes = [...aboutItems, ...formsItems, ...vacanciesItems]
+      console.log("TCL: ruRoutes", ruRoutes)
+
+      const enRoutes = ruRoutes.map(item => {
+        item.route = "/en" + item.route
+        return item
+      })
+      console.log("TCL: enRoutes", enRoutes)
+      return ruRoutes //[...ruRoutes, ...enRoutes]
 
     }
   },
@@ -170,22 +192,22 @@ module.exports = {
       }
     ],
     ['nuxt-i18n', {
-      vueI18nLoader: true,
+      // vueI18nLoader: true,
       // Options
       locales: [{
           code: 'en',
           iso: 'en-US',
-          file: 'en.js'
+          // file: 'en.js'
         },
         {
           code: 'ru',
           iso: 'ru-RU',
-          file: 'ru.js'
+          // file: 'ru.js'
         },
       ],
       defaultLocale: 'ru',
-      lazy: true,
-      langDir: 'lang/'
+      // lazy: true,
+      // langDir: 'lang/'
     }],
   ],
 
