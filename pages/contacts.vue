@@ -15,10 +15,16 @@
     </div>
     <section class="content-bg">
       <v-container class="py-5" grid-list-xl>
-        <v-layout class="mb-5" wrap v-for="(item,index) in contacts" :key="item.title">
-          <v-flex>
-            <h2 class="mb-4" v-text="item.title" data-aos="fade-in"></h2>
-            <div class="contacts-list text-sm-left mb-4" data-aos="fade-in">
+        <v-layout wrap>
+          <div
+            xs12
+            v-for="(item,index) in contacts"
+            :key="item.title"
+            class="mb-5 flex xs12"
+            data-aos="fade-in"
+          >
+            <h2 class="mb-4" v-text="item.title"></h2>
+            <div class="contacts-list text-sm-left mb-4">
               <a class="mb-3 align-center display-flex" :href="`tel:${item.phone}`">
                 <v-icon class="mr-2">phone</v-icon>
                 {{item.phone}}
@@ -39,32 +45,33 @@
             </div>
             <my-map
               :id="`map-${index}`"
-              data-aos="fade-in"
               :markers="[item.mapMarker]"
               :options="{}"
               :zoom="14"
               :center="item.mapMarker"
               :detalized="true"
             />
-          </v-flex>
+          </div>
         </v-layout>
-        <h2 class="mb-4 flex xs12 pl-0 mt-5 mb-4" data-aos="fade-in">{{$t("formTitle")}}</h2>
+        <h2 class="mb-4 flex xs12 pl-0 mt-5 mb-4" data-aos="fade-in">{{locale.contactFormTitle}}</h2>
         <contact-form/>
-        <h2 class="mb-4 mt-5" data-aos="fade-in">{{$t("badReaction")}}</h2>
-        <p class="display-1" data-aos="fade-in">{{$t("badReactionText")}}</p>
+        <h2 class="mb-3 mt-5" data-aos="fade-in">{{locale.contactReationTitle}}</h2>
+        <p class="display-1 mb-4" data-aos="fade-in">{{locale.contactReationText}}</p>
 
         <div class="contacts-list" data-aos="fade-in">
-          <a class="mb-3 align-center display-flex" href="tel:+74993116771">
-            <v-icon class="mr-2">phone</v-icon>+7 (499) 311 67 71
+          <a class="mb-3 align-center display-flex" :href="`tel:${locale.contactReactionPhone}`">
+            <v-icon class="mr-2">phone</v-icon>
+            {{locale.contactReactionPhone}}
           </a>
-          <a class="mb-3 align-center display-flex" @click="$vuetify.goTo(`#map-0`)">
-            <v-icon class="mr-2">location_on</v-icon>{{badReactionAddress}}
+          <a class="mb-3 align-center display-flex">
+            <v-icon class="mr-2">location_on</v-icon>
+            {{locale.contactReactionAddress}}
           </a>
-          <a class="align-center display-flex" href="mailto:office@cscpharma.ru">
-            <v-icon class="mr-2">email</v-icon>office@cscpharma.ru
+          <a class="align-center display-flex" :href="`mailto:${locale.contactReactionMail}`">
+            <v-icon class="mr-2">email</v-icon>
+            {{locale.contactReactionMail}}
           </a>
         </div>
-
       </v-container>
     </section>
   </div>
@@ -75,7 +82,6 @@ import gql from "graphql-tag";
 
 import MyMap from "~/components/Map";
 import ContactForm from "~/components/ContactForm";
-import TroubleForm from "~/components/TroubleForm";
 
 export default {
   head() {
@@ -91,132 +97,135 @@ export default {
       ]
     };
   },
-  computed:{
-    troubleContact(){
-      return this.contacts.find(item=>item)
+  computed: {
+    locale() {
+      return this.$store.state.locale;
     }
   },
   data: () => ({
     dialog: false,
-    imageBaseUrl: "http://localhost:1337"
+    imageBaseUrl: process.env.imageBaseUrl
   }),
   components: {
     MyMap,
-    ContactForm,
-    TroubleForm
-    // Breadcrumbs
+    ContactForm
   },
   async asyncData(ctx) {
     const locale = ctx.app.i18n.locale;
     let client = ctx.app.apolloProvider.defaultClient;
-    const ruQuery = gql`
-      fragment pagesFragment on Page {
-        title
-        slug
-        itemsOrder
-      }
-      query pagesQuery($mainSlug: String!) {
-        mainPage: pages(where: { slug: $mainSlug }) {
-          title
-          description
-          img {
-            url
+
+    let query;
+    if (locale === "ru") {
+      query = gql`
+        query pagesQuery {
+          locales(where: { name: "ru" }) {
+            vacancies
+            catalog
+            aboutUs
+            mainPage
+            contacts
+            copyright
+            name
+            contactFormTitle
+            contactReationTitle
+            contactReationText
+            contactReactionPhone
+            contactReactionAddress
+            contactReactionMail
           }
-        }
-        storyPage: pages(where: { slug: "story" }) {
-          ...pagesFragment
-        }
-        charityPage: pages(where: { slug: "charity" }) {
-          ...pagesFragment
-        }
-        missionPage: pages(where: { slug: "mission" }) {
-          ...pagesFragment
-        }
-        teamPage: pages(where: { slug: "team" }) {
-          ...pagesFragment
-        }
-        contacts {
-          title
-          phone
-          address
-          email
-          workTime
-          mapMarker
-          itemsOrder
-        }
-        pills {
-          title
-          forms {
+          mainPage: pages(where: { slug: "contacts" }) {
             title
-            slug
+            description
+            img {
+              url
+            }
           }
-        }
-      }
-    `;
-    const enQuery = gql`
-      fragment pagesFragment on Page {
-        title_en
-        slug
-        itemsOrder
-      }
-      query pagesQuery($mainSlug: String!) {
-        mainPage: pages(where: { slug: $mainSlug }) {
-          title_en
-          description_en
-          img {
-            url
-          }
-        }
-        storyPage: pages(where: { slug: "story" }) {
-          ...pagesFragment
-        }
-        charityPage: pages(where: { slug: "charity" }) {
-          ...pagesFragment
-        }
-        missionPage: pages(where: { slug: "mission" }) {
-          ...pagesFragment
-        }
-        teamPage: pages(where: { slug: "team" }) {
-          ...pagesFragment
-        }
-        contacts {
-          title_en
-          phone
-          address_en
-          email
-          workTime_en
-          mapMarker
-          itemsOrder
-        }
-        pills {
-          title_en
-          forms {
+          aboutPages: pages(
+            sort: "itemsOrder:ask"
+            where: { slug: ["story", "charity", "mission", "team"] }
+          ) {
             title_en
             slug
+            itemsOrder
+          }
+          contacts {
+            title
+            phone
+            address
+            email
+            workTime
+            mapMarker
+            itemsOrder
+          }
+          pills(sort: "title:ask") {
+            title
+            forms {
+              title
+              slug
+            }
           }
         }
-      }
-    `;
-    let data;
-    if (locale === "ru") {
-      console.log("RUSSIAN LANG");
-      let { data: ruData } = await client.query({
-        variables: {
-          mainSlug: "contacts"
-        },
-        query: ruQuery
-      });
-      data = ruData;
+      `;
     } else if (locale === "en") {
-      console.log("en LANG");
-      let { data: enData } = await client.query({
-        variables: {
-          mainSlug: "contacts"
-        },
-        query: enQuery
-      });
-      for (let dataItem of Object.keys(enData)) {
-        enData[dataItem] = enData[dataItem].map(item => {
+      query = gql`
+        query pagesQuery {
+          locales(where: { name: "en" }) {
+            vacancies
+            catalog
+            aboutUs
+            mainPage
+            contacts
+            copyright
+            name
+            contactFormTitle
+            contactReationTitle
+            contactReationText
+            contactReactionPhone
+            contactReactionAddress
+            contactReactionMail
+          }
+          mainPage: pages(where: { slug: "contacts" }) {
+            title_en
+            description_en
+            img {
+              url
+            }
+          }
+          aboutPages: pages(
+            sort: "itemsOrder:ask"
+            where: { slug: ["story", "charity", "mission", "team"] }
+          ) {
+            title_en
+            slug
+            itemsOrder
+          }
+
+          contacts {
+            title_en
+            phone
+            address_en
+            email
+            workTime_en
+            mapMarker
+            itemsOrder
+          }
+          pills(sort: "title:ask") {
+            title_en
+            forms {
+              title_en
+              slug
+            }
+          }
+        }
+      `;
+    }
+
+    let { data } = await client.query({
+      query: query
+    });
+    if (locale === "en") {
+      for (let dataItem of Object.keys(data)) {
+        data[dataItem] = data[dataItem].map(item => {
           let newObj = {};
           for (let i of Object.keys(item)) {
             if (i.includes("_en")) {
@@ -228,27 +237,10 @@ export default {
           return newObj;
         });
       }
-      data = enData;
     }
-
-    const pages = [
-      ...data.storyPage,
-      ...data.charityPage,
-      ...data.missionPage,
-      ...data.teamPage
-    ];
-    console.log(data);
-    const sortPills = data.pills.sort((a, b) => {
-      if (a.title < b.title) {
-        return -1;
-      }
-      if (a.title > b.title) {
-        return 1;
-      }
-      return 0;
-    });
-    ctx.store.commit("pills", sortPills);
-    ctx.store.commit("aboutPages", pages.sort((a, b) => a.order - b.order));
+    ctx.store.commit("pills", data.pills);
+    ctx.store.commit("aboutPages", data.aboutPages);
+    ctx.store.commit("locale", data.locales[0]);
     return {
       page: data.mainPage[0],
       contacts: data.contacts
@@ -267,23 +259,23 @@ export default {
 .content-bg {
   min-height: 60vh;
   display: flex;
-  // background-image: url(https://csc.storage.yandexcloud.net/3ec21ded61e84b1c9fdfe523b4a2dd1c.png);
   background-position: center;
   background-size: cover;
 }
-a:hover {
-  color: #006df0;
-}
-
 .contacts-list {
   display: flex;
   flex-direction: column;
+
   a {
     display: flex;
     align-items: center;
     text-decoration: none;
+    color: #11333a;
     i {
       color: currentColor;
+    }
+    &:hover {
+      color: #006df0;
     }
   }
 }

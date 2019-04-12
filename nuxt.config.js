@@ -3,15 +3,15 @@ const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 const axios = require('axios')
 const i18nExtensions = require('vue-i18n-extensions')
 const path = require('path')
-const baseUrl = process.env.BASE_URL || "http://localhost:1337" //'https://cscbackend.herokuapp.com'
-//"http://localhost:8080" //
-// "http://localhost:8080"baseUrl  process.env.BASE_URL + '/graphql'
-//  //
+const baseUrl = process.env.BASE_URL || "http://cscpharma.jelastic.regruhosting.ru"
+const imageBaseUrl = process.env.IMAGE_BASE_URL || "http://cscpharma.jelastic.regruhosting.ru"
+
 
 module.exports = {
   mode: 'universal',
   env: {
     baseUrl: baseUrl,
+    imageBaseUrl: imageBaseUrl,
     formFrom: process.env.FORM_FROM || 'hydroservice24ru@gmail.com',
     formContactTo: process.env.FORM_CONTACT_TO || 's.sharkova@cscpharma.ru',
     formTroubleTo: process.env.FORM_TROUBLE_TO || 's.sharkova@cscpharma.ru',
@@ -191,7 +191,7 @@ module.exports = {
 
   sitemap: {
     path: "/sitemap.xml",
-    hostname: "https://hydroservice24.ru",
+    hostname: "https://cscpharma.ru",
     cacheTime: 1000 * 60 * 15,
     gzip: true,
     generate: true,

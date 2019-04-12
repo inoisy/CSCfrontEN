@@ -13,7 +13,7 @@
           </v-flex>
         </v-layout>
       </v-container>
-      <div class="forms-tabs-wrapper display-flex justify-center" v-if="tabs.length>1">
+      <div class="forms-tabs-wrapper display-flex justify-center" v-if="tabs && tabs.length>1">
         <v-btn
           flat
           v-for="item in tabs"
@@ -21,20 +21,21 @@
           class="ma-0"
           :to="localePath({ name: 'catalog-slug', params: { slug: item.slug } })"
           nuxt
-        >{{locale==="ru" ? item.title : item.title_en }}</v-btn>
+        >{{currLocale==="ru" ? item.title : item.title_en }}</v-btn>
       </div>
     </div>
     <section
-      :style="`background-image: url(${require('~/assets/bg1.jpg')}); background-size: cover; background-position: center;`"
+      class="product-wrapper-outer"
+      :style="`background-image: url(${require('~/assets/bg1.jpg')}); `"
     >
       <v-container class="py-5 product-wrapper">
-        <div class="product-info mb-5 layout wrap">
+        <div class="product-infolayout wrap">
           <div class="flex product-text">
-            <div class="flex xs12 md5 lg4 images-wrapper mb-5" v-if="img && img.length > 0 ">
+            <div class="flex xs12 md5 lg4 images-wrapper mb-4" v-if="img && img.length > 0 ">
               <div class="layout wrap pa-0">
                 <div
                   class="flex pr-1 mb-2"
-                  :class="img.length > 1 ? 'xs9' : 'offset-xs2 xs8 offset-md0 md12'"
+                  :class="img && img.length > 1 ? 'xs9' : 'offset-xs2 xs8 offset-md0 md12'"
                 >
                   <v-card
                     hover
@@ -51,7 +52,7 @@
                   </v-card>
                 </div>
                 <div
-                  v-if="img.length > 1"
+                  v-if="img && img.length > 1"
                   class="flex xs3 thumbnail-wrapper display-flex pa-0"
                   style="flex-wrap: wrap; align-content: flex-start;"
                 >
@@ -79,77 +80,87 @@
                 </div>
               </div>
             </div>
-
-            <v-alert class="mb-4" outline :value="recipe" type="error">{{ $t("recipe") }}</v-alert>
+            <v-alert
+              class="mb-4"
+              outline
+              :value="recipe"
+              type="error"
+              color="#ff5252"
+            >{{ locale.catalogRecipe }}</v-alert>
             <p v-if="pill.manufacturer">
-              <strong>{{$t('manufacturer')}}:</strong>
+              <strong>{{locale.catalogManufacturer}}:</strong>
               <a
                 class="product-manufacturer"
                 @click="$vuetify.goTo('#manufacturer')"
-              >{{pill.manufacturer.title}}</a>
+              >{{currLocale === 'ru' ? pill.manufacturer.title : pill.manufacturer.title_en }}</a>
             </p>
 
             <p v-if="nepatentovannoeNaimenovanie">
-              <strong>{{$t('nepatentovannoeNaimenovanie')}}:</strong>
+              <strong>{{locale.catalogActiveIngredient}}:</strong>
               {{nepatentovannoeNaimenovanie}}
             </p>
             <p id="lekarstvennayaForma" v-if="lekarstvennayaForma">
-              <strong>{{$t('lekarstvennayaForma')}}:</strong>
+              <strong>{{locale.catalogDosageForm}}:</strong>
               {{lekarstvennayaForma}}
             </p>
-            <div v-if="pill.otherwebsitelink">
-              {{$t('otherwebsitelink')}}:
+            <p v-if="pill.otherwebsitelink">
+              {{locale.catalogOtherWebsite}}:
               <a
                 target="_blank"
                 class="product-manufacturer"
                 :href="pill.otherwebsitelink"
               >{{pill.otherwebsitelink}}</a>
-            </div>
+            </p>
             <v-btn
               v-if="description && !access"
               class="ml-0 mb-3"
               @click="showDialog=true"
-            >{{$t('readMore')}}</v-btn>
+            >{{locale.readMore}}</v-btn>
             <v-dialog v-if="!access" v-model="showDialog" persistent max-width="400">
               <v-card>
-                <v-card-title class="headline">Ограниченный доступ</v-card-title>
-                <v-card-text>
-                  <p>Данный раздел сайта содержит специализированную профессиональную информацию. В соответствии с Федеральным законом РФ №38-ФЗ «О рекламе» от 13 марта 2006 года, информация данного раздела предназначена исключительно для медицинских и фармацевтических работников.</p>
-                  <p>Вы являетесь медицинским/фармацевтическим работником?</p>
-                </v-card-text>
+                <v-card-title class="headline">{{locale.catalogLimitedTitle}}</v-card-title>
+                <v-card-text v-html="locale.catalogLimitedText"></v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn
                     color="green darken-1"
                     flat
                     @click="showDialog = false; $store.commit('access',false)"
-                  >Нет</v-btn>
+                  >{{locale.no}}</v-btn>
                   <v-btn
                     color="green darken-1"
                     flat
                     @click="showDialog = false; $store.commit('access',true)"
-                  >Да</v-btn>
+                  >{{locale.yes}}</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
             <div v-if="access" v-html="description"/>
-            <p class="font-italic caption">{{$t('contraindications')}}</p>
+            <p class="font-italic caption mb-0">{{locale.catalogContraindications}}</p>
           </div>
         </div>
-        <v-dialog v-model="dialog" fullscreen v-if="img && img.length > 0 ">
-          <v-carousel hide-delimiters :cycle="false" v-model="carouselValue" light height="100%">
+        <v-dialog v-model="dialog" fullscreen v-if="img && img.length > 0">
+          <v-carousel
+            hide-delimiters
+            :cycle="false"
+            v-model="carouselValue"
+            light
+            height="100%"
+            :hide-controls="img.length===1"
+          >
             <v-carousel-item lazy v-for="(item,i) in img" :key="i">
               <div class="slide-wrapper">
                 <img :src="imageBaseUrl+item.url">
               </div>
             </v-carousel-item>
           </v-carousel>
-          <v-btn fab class="btn-close" dark @click="dialog=false">
+          <v-btn fab class="btn-close" @click="dialog=false">
             <v-icon>close</v-icon>
           </v-btn>
         </v-dialog>
         <v-tabs
           v-model="instructionTabs"
+          v-if="currLocale==='ru'"
           ref="tab"
           show-arrows
           grow
@@ -295,9 +306,9 @@
               <div v-html="adresPretenziy"/>
             </div>
           </v-tab-item>
-          <v-tab v-if="pill.articles.length > 0" ripple>Научные публикации</v-tab>
+          <v-tab v-if="pill.Articles && pill.Articles.length > 0" ripple>Научные публикации</v-tab>
           <v-tab-item
-            v-if="pill.articles.length > 0"
+            v-if="pill.Articles && pill.Articles.length > 0"
             class="pa-3 justify-center"
             style="height: auto"
           >
@@ -326,10 +337,9 @@
             </div>
           </v-tab-item>
         </v-tabs>
-        <!-- </v-container>
-        <v-container>-->
-        <v-layout class="justify-center" wrap v-if="pill.pilllinks.length > 0">
-          <h2 data-aos="fade-in" class="my-5 xs12 flex mb-5 text-xs-center">{{$t("whereBuy")}}</h2>
+
+        <v-layout class="justify-center" wrap v-if="pill.pilllinks && pill.pilllinks.length > 0">
+          <h2 data-aos="fade-in" class="my-5 xs12 flex mb-5 text-xs-center">{{locale.whereBuy}}</h2>
           <div
             class="justify-center flex xs6 sm4 md3 lg2 justify-center display-flex"
             v-for="item in pill.pilllinks"
@@ -352,6 +362,7 @@
       class="position-relative display-flex column"
       id="manufacturer"
       v-if="pill.manufacturer"
+      style="clear:both;"
     >
       <v-flex order-xs2 order-md1>
         <my-map
@@ -371,21 +382,25 @@
       <v-flex xs12 order-xs1 order-md2 class="flex position-relative manufacturer-wrapper">
         <v-container class="py-5">
           <v-layout>
-            <div class="flex xs12 offset-sm1 sm10 offset-md0 md6">
-              <h2 class="mb-4" data-aos="fade-in">{{$t("aboutManufacturer")}}</h2>.
+            <div class="flex xs12 md6">
+              <h2 class="mb-4" data-aos="fade-in">{{locale.catalogAboutManufacturer}}</h2>.
               <div class="manufacturer-content">
-                <h3 class="display-4 mb-4" data-aos="fade-in" v-text="pill.manufacturer.title"/>
+                <h3
+                  class="display-4 mb-4"
+                  data-aos="fade-in"
+                  v-text="currLocale==='ru' ? pill.manufacturer.title : pill.manufacturer.title_en"
+                />
                 <div class="img-wrapper" data-aos="fade-in" v-if="pill.manufacturer.img">
                   <img
                     class="mb-4"
                     :src="imageBaseUrl+pill.manufacturer.img.url"
-                    :alt="pill.manufacturer.title"
+                    :alt="currLocale==='ru' ? pill.manufacturer.title : pill.manufacturer.title_en"
                     style="display: block; width: 100%; border: 1px solid #919899; border-radius: 15px;"
                   >
                 </div>
                 <div
                   class="font-weight-medium"
-                  v-html="pill.manufacturer.description"
+                  v-html="currLocale==='ru' ? pill.manufacturer.description : pill.manufacturer.description_en "
                   data-aos="fade-in"
                 />
               </div>
@@ -544,6 +559,11 @@
   width: 100%;
   flex-wrap: wrap;
 }
+.product-wrapper-outer {
+  background-size: cover;
+  background-position: center;
+  display: flex;
+}
 .product-wrapper {
   .product-manufacturer {
     text-decoration: none;
@@ -612,7 +632,7 @@ export default {
   },
   data() {
     return {
-      imageBaseUrl: "http://localhost:1337",
+      imageBaseUrl: process.env.imageBaseUrl,
       dialog: false,
       showDesk: false,
       showDialog: false,
@@ -628,7 +648,8 @@ export default {
   watch: {
     instructionTabs: function(tabs, sec) {
       if (
-        this.pill.articles.length > 0 &&
+        this.pill.Articles &&
+        this.pill.Articles.length > 0 &&
         tabs === this.$refs.tab.items.length - 1 &&
         !this.access
       ) {
@@ -638,238 +659,258 @@ export default {
   },
   async asyncData(ctx) {
     const locale = ctx.app.i18n.locale;
-
     let client = ctx.app.apolloProvider.defaultClient;
-    const ruQuery = gql`
-      fragment pagesFragment on Page {
-        title
-        slug
-      }
-      query FormsQuery($slug: String!, $bgSlug: String!) {
-        storyPage: pages(where: { slug: "story" }) {
-          ...pagesFragment
-        }
-        charityPage: pages(where: { slug: "charity" }) {
-          ...pagesFragment
-        }
-        missionPage: pages(where: { slug: "mission" }) {
-          ...pagesFragment
-        }
-        teamPage: pages(where: { slug: "team" }) {
-          ...pagesFragment
-        }
-        bgPage: pages(where: { slug: $bgSlug }) {
-          img {
-            url
+
+    let query;
+    if (locale === "ru") {
+      query = gql`
+        query FormsQuery($slug: String!) {
+          locales(where: { name: "ru" }) {
+            vacancies
+            catalog
+            aboutUs
+            mainPage
+            contacts
+            copyright
+            name
+            catalogDosageForm
+            catalogManufacturer
+            catalogLimitedTitle
+            catalogLimitedText
+            catalogContraindications
+            catalogActiveIngredient
+            catalogOtherWebsite
+            catalogRecipe
+            catalogWhereBuy
+            catalogAboutManufacturer
+            yes
+            no
+            readMore
           }
-        }
-        pills {
-          title
-          forms {
-            title
+          aboutPages: pages(
+            sort: "itemsOrder:ask"
+            where: { slug: ["story", "charity", "mission", "team"] }
+          ) {
+            title_en
             slug
           }
-        }
-        forms(where: { slug: $slug }) {
-          title
-          description
-          recipe
-          torgovoeNazvanie
-          nepatentovannoeNaimenovanie
-          lekarstvennayaForma
-          sostav
-          opisanie
-          farmakoterapevticheskayaGruppa
-          kodATX
-          farmakodinamika
-          farmakokinetika
-          pokazaniya
-          protivopokazaniya
-          meryPredostorozhnosti
-          priBeremennosti
-          sposobPrimeneniyaDozy
-          peredozirovka
-          pobochnoeDeystvie
-          vzaimodeystvieSDrugimiPreparatami
-          osobyeUkazaniya
-          vliyanieNaAvtomobil
-          formaVypuska
-          srokGodnosti
-          usloviyaHraneniya
-          vladelecRegistracionnogoUdostovereniya
-          proizvoditel
-          upakovkaKontrol
-          adresPretenziy
-          img {
-            url
-            created_at
+          bgPage: pages(where: { slug: "catalog" }) {
+            img {
+              url
+            }
           }
-          pill {
+          pills(sort: "title:ask") {
+            title
+            forms {
+              title
+              slug
+            }
+          }
+          forms(where: { slug: $slug }) {
             title
             description
-            otherwebsitelink
-            articles {
-              url
-              ext
-              name
-              size
-            }
+            recipe
+            torgovoeNazvanie
+            nepatentovannoeNaimenovanie
+            lekarstvennayaForma
+            sostav
+            opisanie
+            farmakoterapevticheskayaGruppa
+            kodATX
+            farmakodinamika
+            farmakokinetika
+            pokazaniya
+            protivopokazaniya
+            meryPredostorozhnosti
+            priBeremennosti
+            sposobPrimeneniyaDozy
+            peredozirovka
+            pobochnoeDeystvie
+            vzaimodeystvieSDrugimiPreparatami
+            osobyeUkazaniya
+            vliyanieNaAvtomobil
+            formaVypuska
+            srokGodnosti
+            usloviyaHraneniya
+            vladelecRegistracionnogoUdostovereniya
+            proizvoditel
+            upakovkaKontrol
+            adresPretenziy
             img {
               url
+              createdAt
             }
-            forms {
-              title
-              slug
-            }
-            pilllinks {
-              href
-              pharmacy {
-                name
-                img {
-                  url
-                }
-              }
-            }
-            manufacturer {
+            pill {
               title
               description
-              mapMarkers
+              otherwebsitelink
+              Articles {
+                url
+                ext
+                name
+                size
+              }
               img {
                 url
               }
-            }
-          }
-        }
-      }
-    `;
-    const enQuery = gql`
-      fragment pagesFragment on Page {
-        title_en
-        slug
-      }
-      query FormsQuery($slug: String!, $bgSlug: String!) {
-        storyPage: pages(where: { slug: "story" }) {
-          ...pagesFragment
-        }
-        charityPage: pages(where: { slug: "charity" }) {
-          ...pagesFragment
-        }
-        missionPage: pages(where: { slug: "mission" }) {
-          ...pagesFragment
-        }
-        teamPage: pages(where: { slug: "team" }) {
-          ...pagesFragment
-        }
-        bgPage: pages(where: { slug: $bgSlug }) {
-          img {
-            url
-          }
-        }
-        pills {
-          title_en
-          forms {
-            title
-            slug
-          }
-        }
-        forms(where: { slug: $slug }) {
-          title_en
-          description_en
-          recipe
-          torgovoeNazvanie_en
-          nepatentovannoeNaimenovanie
-          lekarstvennayaForma
-          sostav
-          opisanie
-          farmakoterapevticheskayaGruppa
-          kodATX
-          farmakodinamika
-          farmakokinetika
-          pokazaniya
-          protivopokazaniya
-          meryPredostorozhnosti
-          priBeremennosti
-          sposobPrimeneniyaDozy
-          peredozirovka
-          pobochnoeDeystvie
-          vzaimodeystvieSDrugimiPreparatami
-          osobyeUkazaniya
-          vliyanieNaAvtomobil
-          formaVypuska
-          srokGodnosti
-          usloviyaHraneniya
-          vladelecRegistracionnogoUdostovereniya
-          proizvoditel
-          upakovkaKontrol
-          adresPretenziy
-          img {
-            url
-            created_at
-          }
-          pill {
-            title_en
-            description_en
-            otherwebsitelink
-            articles {
-              url
-              ext
-              name
-              size
-            }
-            img {
-              url
-            }
-            forms {
-              title_en
-              slug
-            }
-            pilllinks {
-              href
-              pharmacy {
-                name
+              forms {
+                title
+                slug
+              }
+              pilllink {
+                href
+                pharmacy {
+                  name
+                  img {
+                    url
+                  }
+                }
+              }
+              manufacturer {
+                title
+                description
+                mapMarkers
                 img {
                   url
                 }
               }
             }
-            manufacturer {
+          }
+        }
+      `;
+    } else if (locale === "en") {
+      query = gql`
+        query FormsQuery($slug: String!) {
+          locales(where: { name: "en" }) {
+            vacancies
+            catalog
+            aboutUs
+            mainPage
+            contacts
+            copyright
+            name
+            catalogDosageForm
+            catalogManufacturer
+            catalogLimitedTitle
+            catalogLimitedText
+            catalogContraindications
+            catalogActiveIngredient
+            catalogOtherWebsite
+            catalogRecipe
+            catalogWhereBuy
+            catalogAboutManufacturer
+            yes
+            no
+            readMore
+          }
+          aboutPages: pages(
+            sort: "itemsOrder:ask"
+            where: { slug: ["story", "charity", "mission", "team"] }
+          ) {
+            title_en
+            slug
+          }
+          bgPage: pages(where: { slug: "catalog" }) {
+            img {
+              url
+            }
+          }
+          pills(sort: "title:ask") {
+            title_en
+            forms {
               title_en
-              description_en
-              mapMarkers
+              slug
+            }
+          }
+          forms(where: { slug: $slug }) {
+            title_en
+            description_en
+            recipe
+            torgovoeNazvanie_en
+            nepatentovannoeNaimenovanie_en
+            lekarstvennayaForma_en
+            sostav
+            opisanie
+            farmakoterapevticheskayaGruppa
+            kodATX
+            farmakodinamika
+            farmakokinetika
+            pokazaniya
+            protivopokazaniya
+            meryPredostorozhnosti
+            priBeremennosti
+            sposobPrimeneniyaDozy
+            peredozirovka
+            pobochnoeDeystvie
+            vzaimodeystvieSDrugimiPreparatami
+            osobyeUkazaniya
+            vliyanieNaAvtomobil
+            formaVypuska
+            srokGodnosti
+            usloviyaHraneniya
+            vladelecRegistracionnogoUdostovereniya
+            proizvoditel
+            upakovkaKontrol
+            adresPretenziy
+            img {
+              url
+              createdAt
+            }
+            pill {
+              otherwebsitelink
+              Articles {
+                url
+                ext
+                name
+                size
+              }
               img {
                 url
+              }
+              forms {
+                title_en
+                slug
+              }
+              pilllink {
+                href
+                pharmacy {
+                  name
+                  img {
+                    url
+                  }
+                }
+              }
+              manufacturer {
+                title_en
+                description_en
+                mapMarkers
+                img {
+                  url
+                }
               }
             }
           }
         }
-      }
-    `;
-    let data;
-    if (locale === "ru") {
-      console.log("RUSSIAN LANG");
-      const { data: ruData } = await client.query({
-        variables: {
-          slug: ctx.route.params.slug,
-          bgSlug: "catalog"
-        },
-        query: ruQuery
-      });
-      data = ruData;
-    } else if (locale === "en") {
-      console.log("en LANG");
-      const { data: enData } = await client.query({
-        variables: {
-          slug: ctx.route.params.slug,
-          bgSlug: "catalog"
-        },
-        query: enQuery
-      });
-      for (let dataItem of Object.keys(enData)) {
-        enData[dataItem] = enData[dataItem].map(item => {
+      `;
+    }
+
+    const { data } = await client.query({
+      variables: {
+        slug: ctx.route.params.slug
+        // bgSlug: "catalog"
+      },
+      query: query
+    });
+    if (locale === "en") {
+      for (let dataItem of Object.keys(data)) {
+        data[dataItem] = data[dataItem].map(item => {
           let newObj = {};
           for (let i of Object.keys(item)) {
             if (i.includes("_en")) {
               newObj[i.replace("_en", "")] = item[i];
+            } else if (!Array.isArray(item[i]) && typeof item[i] === "object") {
+              console.log("OBJECT!", item[i]);
+              newObj[i] = item[i];
             } else {
               newObj[i] = item[i];
             }
@@ -877,32 +918,35 @@ export default {
           return newObj;
         });
       }
-      data = enData;
     }
+    //   ...data.storyPage,
+    //   ...data.charityPage,
+    //   ...data.missionPage,
+    //   ...data.teamPage
+    // ];
+    // .sort((a, b) => {
+    //   // console.log(a);
+    //   if (a.title < b.title) {
+    //     return -1;
+    //   }
+    //   if (a.title > b.title) {
+    //     return 1;
+    //   }
+    //   return 0;
+    // });
+    //  const pages = ;
+    //      const sortPills =;
 
-    const pages = [
-      ...data.storyPage,
-      ...data.charityPage,
-      ...data.missionPage,
-      ...data.teamPage
-    ];
-    const sortPills = data.pills.sort((a, b) => {
-      // console.log(a);
-      if (a.title < b.title) {
-        return -1;
-      }
-      if (a.title > b.title) {
-        return 1;
-      }
-      return 0;
-    });
-    ctx.store.commit("pills", sortPills);
-    ctx.store.commit("aboutPages", pages.sort((a, b) => a.order - b.order));
+    // [
+    ctx.store.commit("pills", data.pills);
+    ctx.store.commit("aboutPages", data.aboutPages);
     let bg = data.bgPage[0];
     let form = data.forms[0];
     form.img = form.img.sort(
       (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
     );
+    ctx.store.commit("locale", data.locales[0]);
+
     // console.log(form.img);
     return {
       ...form,
@@ -911,6 +955,9 @@ export default {
   },
   computed: {
     locale() {
+      return this.$store.state.locale;
+    },
+    currLocale() {
       return this.$i18n.locale;
     },
     access() {
@@ -929,11 +976,11 @@ export default {
     breadcrumbsItems() {
       return [
         {
-          text: this.$t("index"),
+          text: this.$store.state.locale.mainPage,
           to: this.localePath("index")
         },
         {
-          text: this.$t("catalog"),
+          text: this.$store.state.locale.aboutUs,
           to: this.localePath("catalog")
         },
         {

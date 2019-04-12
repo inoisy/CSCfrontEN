@@ -1,6 +1,6 @@
 export default {
   ourPills: "Our pills",
-  allPills: "All pills",
+  allPills: "See all",
   ourBenefits: "Our advantages",
   ourBenefitsText: "We approach our work with maximum responsibility in all areas and use a comprehensive method that allows us to cover and delve into every aspect of our work.",
   ourPartners: "Our partners",
@@ -26,8 +26,8 @@ export default {
   formTitle: "formTitle",
   badReaction: "badReaction",
   badReactionText: "badReactionText",
-  badReactionAddress: "АО «Си Эс Си ЛТД», 115230, г. Москва, Варшавское шоссе, д.47, кор.4, 14 этаж"
-
+  badReactionAddress: "АО «Си Эс Си ЛТД», 115230, г. Москва, Варшавское шоссе, д.47, кор.4, 14 этаж",
+  catalogContraindications: "There are contraindications. Read the drug label and check with your physician before use."
 }
 // export default () => {
 //   return new Promise(function (resolve) {

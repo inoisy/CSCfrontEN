@@ -1,35 +1,32 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+// import Vue from 'vue'
+// import Vuex from 'vuex'
 
-Vue.use(Vuex)
+// Vue.use(Vuex)
 
-const store = () => new Vuex.Store({
+// const store = () => new Vuex.Store({
 
-  state: {
-    pills: [],
-    contacts: [],
-    aboutPages: [],
-    access: false
-  },
-
-  mutations: {
-    aboutPages(state, item) {
-      // console.log(this.app.localePath('index'))
-      state.aboutPages = item.sort((a, b) => a.itemsOrder - b.itemsOrder)
-
-    },
-    pills(state, item) {
-
-      state.pills = item
-    },
-    contacts(state, item) {
-      state.contacts = item
-    },
-    access(state, item) {
-      state.access = item
-    },
-
-  }
+export const state = () => ({
+  pills: [],
+  contacts: [],
+  aboutPages: [],
+  access: false,
+  locale: {}
 })
 
-export default store
+export const mutations = {
+  aboutPages(state, item) {
+    state.aboutPages = item
+  },
+  pills(state, item) {
+    state.pills = item
+  },
+  contacts(state, item) {
+    state.contacts = item
+  },
+  access(state, item) {
+    state.access = item
+  },
+  locale(state, item) {
+    state.locale = item
+  }
+}

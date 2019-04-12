@@ -34,7 +34,14 @@
         <h1 class="main-header mb-4 text--accent" v-text="page.title"></h1>
         <p class="display-2 mb-4" v-text="page.description"></p>
 
-        <v-btn :to="localePath('catalog')" nuxt round large dark color="#006df0">{{ $t("catalog") }}</v-btn>
+        <v-btn
+          :to="localePath('catalog')"
+          nuxt
+          round
+          large
+          dark
+          color="#006df0"
+        >{{ locale.catalog }}</v-btn>
         <v-btn
           :to="localePath('about')"
           nuxt
@@ -43,7 +50,7 @@
           flat
           outline
           color="#006df0"
-        >{{ $t("about") }}</v-btn>
+        >{{ locale.aboutUs }}</v-btn>
         <span class="bottom_corners"></span>
       </div>
     </section>
@@ -85,7 +92,7 @@
 
     <section class="pills">
       <div class="px-3 py-5 my-auto text-xs-center">
-        <h2 class="mb-5 page-title" data-aos="fade-in">{{ $t("ourPills") }}</h2>
+        <h2 class="mb-5 page-title" data-aos="fade-in">{{ locale.ourProducts }}</h2>
         <v-container v-swiper:mySwiper="swiperOption">
           <div class="swiper-wrapper">
             <v-flex
@@ -126,29 +133,29 @@
           color="#006df0"
           dark
           data-aos="fade-in"
-        >{{ $t("allPills") }}</v-btn>
+        >{{ locale.allProducts }}</v-btn>
       </div>
     </section>
     <section class="benefits">
       <v-container grid-list-xl class="pb-5">
         <v-layout wrap>
           <div class="flex xs12 md4 py-5" data-aos="fade-in">
-            <h3 class="mb-3">{{ $t("ourBenefits") }}</h3>
-            <p>{{ $t("ourBenefitsText") }}</p>
+            <h3 class="mb-3">{{ locale.ourBenefitsTitle }}</h3>
+            <p>{{ locale.ourBenefitsText }}</p>
             <v-btn
               :to="localePath('about')"
               nuxt
               class="br-10 ml-0"
               outline
               color="#006df0"
-            >{{ $t("about") }}</v-btn>
+            >{{ locale.aboutUs }}</v-btn>
             <v-btn
               :to="localePath('vacancies')"
               nuxt
               class="br-10 ml-0"
               outline
               color="#006df0"
-            >{{ $t("vacancies") }}</v-btn>
+            >{{ locale.vacancies }}</v-btn>
           </div>
           <v-flex
             xs12
@@ -188,7 +195,7 @@
           <h2
             class="mb-4 text-xs-center flex xs12 page-title"
             data-aos="fade-in"
-          >{{ $t("ourPartners") }}</h2>
+          >{{ locale.ourPartners }}</h2>
           <div v-for="(item,index) in partners" :key="index" data-aos="zoom-in">
             <a
               v-if="item.link && item.logo"
@@ -216,8 +223,7 @@
 @import "swiper/dist/css/swiper.css";
 
 .pills {
-  background-image: url(https://csc.storage.yandexcloud.net/a77aa36b2f804e51908d830a0675b949.jpg);
-
+  background-image: url(~assets/images/pills.jpg);
   background-size: cover;
   background-position-x: center;
   background-position-y: top;
@@ -245,34 +251,17 @@
     min-height: 100vh !important;
     background-position-x: 20%;
   }
-  // .main-wrapper {
-  //   margin-top: calc(56px + 48px) !important;
-  //   margin-bottom: 48px;
-  // }
-  // .pills {
-  //   background-position-x: 0%;
-  // }
 }
 .main-bg {
   min-height: 70vh;
   padding-top: 0 !important;
   .main-header {
-    // -webkit-text-fill-color: #65c851;
-    // -webkit-text-stroke-width: 2px;
-    // -webkit-text-stroke-color: #2f3199;
-    // font-size: 4.5rem !important;
     font-weight: 600;
     font-size: 4rem;
   }
   .main-wrapper {
     margin-top: 56px;
   }
-  // .container {
-  //   margin-top: 56px;
-  // }
-  // .main-bg-image {
-
-  // }
 }
 .about-us {
   min-height: 70vh;
@@ -327,8 +316,6 @@
 .partners {
   background-color: #7deee8;
   min-height: 35vh;
-  // background: url(https://csc.storage.yandexcloud.net/d10f2fbf9eae4808a73c3d08b6f30c58.svg);
-  // background-image: url(https://csc.storage.yandexcloud.net/eccbb76eb29442feaff2d5aefa41a5d3.jpg);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -345,12 +332,10 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background-image: url(https://csc.storage.yandexcloud.net/d10f2fbf9eae4808a73c3d08b6f30c58.svg);
+    background-image: url(~assets/images/bg2.svg);
   }
   img {
-    // max-width: 30%;
     max-height: 100px;
-    // width: 200px;
     transition: all 0.2s ease-in-out;
     max-width: 10rem;
     width: 100%;
@@ -382,10 +367,6 @@ export default {
           content: this.page.description
         },
         {
-          property: "og:locale",
-          content: "ru_RU"
-        },
-        {
           property: "og:type",
           content: "website"
         },
@@ -400,8 +381,7 @@ export default {
         },
         {
           property: "og:image",
-          content:
-            "https://csc.storage.yandexcloud.net/38cf1988f0e84a5d8f3c59890042cc6b.jpg"
+          content: this.imageBaseUrl + this.page.img.url
         },
         {
           property: "og:url",
@@ -422,152 +402,150 @@ export default {
     const locale = ctx.app.i18n.locale;
     let client = ctx.app.apolloProvider.defaultClient;
 
-    const ruQuery = gql`
-      fragment pagesFragment on Page {
-        title
-        slug
-        description
-        itemsOrder
-        icon {
-          url
-        }
-      }
-      query pagesQuery($mainSlug: String!) {
-        mainPage: pages(where: { slug: $mainSlug }) {
-          title
-          description
-          content
-          img {
-            url
-          }
-        }
-
-        storyPage: pages(where: { slug: "story" }) {
-          ...pagesFragment
-        }
-        charityPage: pages(where: { slug: "charity" }) {
-          ...pagesFragment
-        }
-        missionPage: pages(where: { slug: "mission" }) {
-          ...pagesFragment
-        }
-        teamPage: pages(where: { slug: "team" }) {
-          ...pagesFragment
-        }
-
-        manufacturers {
-          title
-          link
-          logo {
-            url
-          }
-        }
-
-        benefits {
-          title
-          description
-          img {
-            url
-          }
-        }
-
-        pills {
-          title
-          description
-          img {
-            url
-          }
-          forms {
-            title
-            slug
-          }
-        }
-      }
-    `;
-    const enQuery = gql`
-      fragment pagesFragment on Page {
-        title_en
-        slug
-        description_en
-        itemsOrder
-        icon {
-          url
-        }
-      }
-      query pagesQuery($mainSlug: String!) {
-        mainPage: pages(where: { slug: $mainSlug }) {
-          title_en
-          description_en
-          content_en
-          img {
-            url
-          }
-        }
-
-        storyPage: pages(where: { slug: "story" }) {
-          ...pagesFragment
-        }
-        charityPage: pages(where: { slug: "charity" }) {
-          ...pagesFragment
-        }
-        missionPage: pages(where: { slug: "mission" }) {
-          ...pagesFragment
-        }
-        teamPage: pages(where: { slug: "team" }) {
-          ...pagesFragment
-        }
-
-        manufacturers {
-          title
-          link
-          logo {
-            url
-          }
-        }
-
-        benefits {
-          title_en
-          description_en
-          img {
-            url
-          }
-        }
-
-        pills {
-          title_en
-
-          img {
-            url
-          }
-          forms {
-            title
-            slug
-          }
-        }
-      }
-    `;
-    let data;
-    let localeData;
+    let query;
     if (locale === "ru") {
-      console.log("RUSSIAN LANG");
-      localeData = {};
-      const { data: ruData } = await client.query({
-        variables: {
-          mainSlug: "index"
-        },
-        query: ruQuery
-      });
-      data = ruData;
+      query = gql`
+        query pagesQuery {
+          locales(where: { name: "ru" }) {
+            ourProducts
+            allProducts
+            ourBenefitsTitle
+            ourBenefitsText
+            ourPartners
+            vacancies
+            catalog
+            aboutUs
+            mainPage
+            contacts
+            copyright
+            name
+          }
+          mainPage: pages(where: { slug: "index" }) {
+            title
+            description
+            content
+            img {
+              url
+            }
+          }
+
+          aboutPages: pages(
+            sort: "itemsOrder:ask"
+            where: { slug: ["story", "charity", "mission", "team"] }
+          ) {
+            title
+            slug
+            description
+            itemsOrder
+            icon {
+              url
+            }
+          }
+
+          manufacturers {
+            title
+            link
+            logo {
+              url
+            }
+          }
+
+          benefits {
+            title
+            description
+            img {
+              url
+            }
+          }
+
+          pills(sort: "title:ask") {
+            title
+            description
+            img {
+              url
+            }
+            forms {
+              title
+              slug
+            }
+          }
+        }
+      `;
     } else if (locale === "en") {
-      console.log("en LANG");
-      let { data: enData } = await client.query({
-        variables: {
-          mainSlug: "index"
-        },
-        query: enQuery
-      });
-      for (let dataItem of Object.keys(enData)) {
-        enData[dataItem] = enData[dataItem].map(item => {
+      query = gql`
+        query pagesQuery {
+          locales(where: { name: "en" }) {
+            ourProducts
+            allProducts
+            ourBenefitsTitle
+            ourBenefitsText
+            ourPartners
+            vacancies
+            catalog
+            aboutUs
+            mainPage
+            contacts
+            copyright
+            name
+          }
+
+          mainPage: pages(where: { slug: "index" }) {
+            title_en
+            description_en
+            content_en
+            img {
+              url
+            }
+          }
+
+          aboutPages: pages(
+            sort: "itemsOrder:ask"
+            where: { slug: ["story", "charity", "mission", "team"] }
+          ) {
+            title_en
+            slug
+            description_en
+            itemsOrder
+            icon {
+              url
+            }
+          }
+
+          manufacturers {
+            title
+            link
+            logo {
+              url
+            }
+          }
+
+          benefits {
+            title_en
+            description_en
+            img {
+              url
+            }
+          }
+
+          pills(sort: "title:ask") {
+            title_en
+            img {
+              url
+            }
+            forms {
+              title
+              slug
+            }
+          }
+        }
+      `;
+    }
+    let { data } = await client.query({
+      query: query
+    });
+    if (locale === "en") {
+      for (let dataItem of Object.keys(data)) {
+        data[dataItem] = data[dataItem].map(item => {
           let newObj = {};
           for (let i of Object.keys(item)) {
             if (i.includes("_en")) {
@@ -579,59 +557,15 @@ export default {
           return newObj;
         });
       }
-      data = enData;
     }
-    const pills = data.pills.sort((a, b) => {
-      if (a.title < b.title) {
-        return -1;
-      }
-      if (a.title > b.title) {
-        return 1;
-      }
-      return 0;
-    });
-    // .map(item => {
-    //   item.forms = item.forms.map(form => {
-    //     const localeSlug = ctx.app.localePath({
-    //       name: "catalog-slug",
-    //       params: {
-    //         slug: form.slug
-    //       }
-    //     });
-    //     form.slug = localeSlug;
-    //     console.log(localeSlug);
-
-    //     return form;
-    //   });
-    //   return item;
-    // });
+    const pills = data.pills;
 
     ctx.store.commit("pills", pills);
-    const aboutPagesItems = [
-      ...data.storyPage,
-      ...data.charityPage,
-      ...data.missionPage,
-      ...data.teamPage
-    ];
-    ctx.store.commit(
-      "aboutPages",
-      aboutPagesItems
-      // .map(item => {
-      // const localeSlug = ctx.app.localePath({
-      //   name: "about-slug",
-      //   params: {
-      //     slug: item.slug
-      //   }
-      // });
-      //   console.log(localeSlug);
-      //   item.slug = localeSlug;
-      //   return item;
-      // })
-    );
-
+    const aboutPagesItems = data.aboutPages;
+    ctx.store.commit("aboutPages", aboutPagesItems);
+    ctx.store.commit("locale", data.locales[0]);
     return {
       page: data.mainPage[0],
-      // pills: pills,
       partners: data.manufacturers.filter(item => item.logo),
       benefits: data.benefits
     };
@@ -642,12 +576,15 @@ export default {
     },
     pills() {
       return this.$store.state.pills;
+    },
+    locale() {
+      return this.$store.state.locale;
     }
   },
 
   data() {
     return {
-      imageBaseUrl: "http://localhost:1337",
+      imageBaseUrl: process.env.imageBaseUrl,
       swiperOption: {
         loop: true,
         slidesPerView: "auto",

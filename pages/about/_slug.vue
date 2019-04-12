@@ -69,7 +69,7 @@ import gql from "graphql-tag";
 export default {
   data() {
     return {
-      imageBaseUrl: "http://localhost:1337"
+      imageBaseUrl: process.env.imageBaseUrl
     };
   },
   head() {
@@ -89,125 +89,117 @@ export default {
   async asyncData(ctx) {
     const locale = ctx.app.i18n.locale;
     let client = ctx.app.apolloProvider.defaultClient;
-    // console.log(ctx.route);
-    // console.log(ctx.route.params.slug);
-    const ruQuery = gql`
-      fragment pagesFragment on Page {
-        title
-        slug
-        description
-        itemsOrder
-        icon {
-          url
-        }
-      }
-      query pagesQuery($slug: String!) {
-        pages(where: { slug: $slug }) {
-          title
-          description
-          slug
-          content
-          gallery {
-            url
+    let query;
+    if (locale === "ru") {
+      query = gql`
+        query pagesQuery($slug: String!) {
+          locales(where: { name: "ru" }) {
+            vacancies
+            catalog
+            aboutUs
+            mainPage
+            contacts
+            copyright
+            name
+            readAlso
+            gallery
           }
-          icon {
-            url
+          pages(where: { slug: $slug }) {
+            title
+            description
+            slug
+            content
+            gallery {
+              url
+            }
+            icon {
+              url
+            }
+            img {
+              url
+            }
           }
-          img {
-            url
-          }
-        }
 
-        storyPage: pages(where: { slug: "story" }) {
-          ...pagesFragment
-        }
-        charityPage: pages(where: { slug: "charity" }) {
-          ...pagesFragment
-        }
-        missionPage: pages(where: { slug: "mission" }) {
-          ...pagesFragment
-        }
-        teamPage: pages(where: { slug: "team" }) {
-          ...pagesFragment
-        }
-        pills {
-          title
-          forms {
+          aboutPages: pages(
+            sort: "itemsOrder:ask"
+            where: { slug: ["story", "charity", "mission", "team"] }
+          ) {
             title
             slug
+            icon {
+              url
+            }
+          }
+          pills(sort: "title:ask") {
+            title
+            forms {
+              title
+              slug
+            }
           }
         }
-      }
-    `;
-    const enQuery = gql`
-      fragment pagesFragment on Page {
-        title_en
-        slug
-        description_en
-        itemsOrder
-        icon {
-          url
-        }
-      }
-      query pagesQuery($slug: String!) {
-        pages(where: { slug: $slug }) {
-          title_en
-          description_en
-          slug
-          content_en
-          gallery {
-            url
+      `;
+    } else if (locale === "en") {
+      query = gql`
+        query pagesQuery($slug: String!) {
+          locales(where: { name: "en" }) {
+            vacancies
+            catalog
+            aboutUs
+            mainPage
+            contacts
+            copyright
+            name
+            readAlso
+            gallery
           }
-          icon {
-            url
+          pages(where: { slug: $slug }) {
+            title_en
+            description_en
+            slug
+            content_en
+            gallery {
+              url
+            }
+            icon {
+              url
+            }
+            img {
+              url
+            }
           }
-          img {
-            url
-          }
-        }
 
-        storyPage: pages(where: { slug: "story" }) {
-          ...pagesFragment
-        }
-        charityPage: pages(where: { slug: "charity" }) {
-          ...pagesFragment
-        }
-        missionPage: pages(where: { slug: "mission" }) {
-          ...pagesFragment
-        }
-        teamPage: pages(where: { slug: "team" }) {
-          ...pagesFragment
-        }
-        pills {
-          title_en
-          forms {
+          aboutPages: pages(
+            sort: "itemsOrder:ask"
+            where: { slug: ["story", "charity", "mission", "team"] }
+          ) {
             title_en
             slug
+            itemsOrder
+            icon {
+              url
+            }
+          }
+          pills(sort: "title:ask") {
+            title_en
+            forms {
+              title_en
+              slug
+            }
           }
         }
-      }
-    `;
-    let data;
-    if (locale === "ru") {
-      console.log("RUSSIAN LANG");
-      let { data: ruData } = await client.query({
-        variables: {
-          slug: ctx.route.params.slug
-        },
-        query: ruQuery
-      });
-      data = ruData;
-    } else if (locale === "en") {
-      console.log("en LANG");
-      let { data: enData } = await client.query({
-        variables: {
-          slug: ctx.route.params.slug
-        },
-        query: enQuery
-      });
-      // console.log(enData);
-      for (let dataItem of Object.keys(enData)) {
-        enData[dataItem] = enData[dataItem].map(item => {
+      `;
+    }
+    let { data } = await client.query({
+      variables: {
+        slug: ctx.route.params.slug
+      },
+      query: query
+    });
+    // console.log(enData);
+    if (locale === "en") {
+      for (let dataItem of Object.keys(data)) {
+        data[dataItem] = data[dataItem].map(item => {
           let newObj = {};
           for (let i of Object.keys(item)) {
             if (i.includes("_en")) {
@@ -219,38 +211,17 @@ export default {
           return newObj;
         });
       }
-
-      data = enData;
     }
-
-    const pages = [
-      ...data.storyPage,
-      ...data.charityPage,
-      ...data.missionPage,
-      ...data.teamPage
-    ];
-    const sortPills = data.pills.sort((a, b) => {
-      // console.log(a);
-      if (a.title < b.title) {
-        return -1;
-      }
-      if (a.title > b.title) {
-        return 1;
-      }
-      return 0;
-    });
-    ctx.store.commit("pills", sortPills);
-    ctx.store.commit("aboutPages", pages.sort((a, b) => a.order - b.order));
-    // console.log(data);
+    ctx.store.commit("pills", data.pills);
+    ctx.store.commit("aboutPages", data.aboutPages);
+    ctx.store.commit("locale", data.locales[0]);
     return {
       page: data.pages[0]
     };
   },
   computed: {
-    data() {
-      return {
-        imageBaseUrl: "http://localhost:1337"
-      };
+    locale() {
+      return this.$store.state.locale;
     },
     aboutPages() {
       return this.$store.state.aboutPages.filter(
@@ -260,11 +231,11 @@ export default {
     breadcrumbsItems() {
       return [
         {
-          text: this.$t("index"),
+          text: this.$store.state.locale.mainPage,
           to: this.localePath("index")
         },
         {
-          text: this.$t("about"),
+          text: this.$store.state.locale.aboutUs,
           to: this.localePath("about")
         },
         {

@@ -34,9 +34,10 @@
               class="px-2 justify-center column text-xs-center text-sm-left display-flex"
             >
               <h2 class="display-3 mb-4 text-xs-center text-sm-left" v-text="item.title"></h2>
-              <div class="mb-3" v-html="item.description"/>
+              <div v-html="item.description"/>
+              <p class="my-3 font-italic caption">{{locale.catalogContraindications}}</p>
               <div v-if="item.forms.length > 1">
-                <p>{{ $t("pillDiffForms") }}</p>
+                <p>{{ locale.catalogDiffForms }}</p>
                 <div>
                   <v-btn
                     v-for="it in item.forms"
@@ -45,7 +46,7 @@
                     outline
                     color="#006df0"
                     class="ml-0"
-                  >{{locale === "ru" ? it.title : it.title_en}}</v-btn>
+                  >{{currLocale==='ru' ? it.title : it.title_en}}</v-btn>
                 </div>
               </div>
               <div v-if="item.forms.length === 1">
@@ -54,7 +55,7 @@
                   outline
                   color="#006df0"
                   class="ml-0"
-                >{{ $t("readMore") }}</v-btn>
+                >{{ locale.readMore }}</v-btn>
               </div>
             </v-flex>
           </div>
@@ -85,140 +86,106 @@ export default {
     const locale = ctx.app.i18n.locale;
     let client = ctx.app.apolloProvider.defaultClient;
 
-    const ruQuery = gql`
-      fragment pagesFragment on Page {
-        title
-        slug
-        description
-        itemsOrder
-        icon {
-          url
-        }
-      }
-      query pagesQuery($mainSlug: String!) {
-        mainPage: pages(where: { slug: $mainSlug }) {
-          title
-          description
-          content
-          img {
-            url
-          }
-        }
-        storyPage: pages(where: { slug: "story" }) {
-          ...pagesFragment
-        }
-        charityPage: pages(where: { slug: "charity" }) {
-          ...pagesFragment
-        }
-        missionPage: pages(where: { slug: "mission" }) {
-          ...pagesFragment
-        }
-        teamPage: pages(where: { slug: "team" }) {
-          ...pagesFragment
-        }
-        pagePills: pills {
-          title
-          description
-
-          img {
-            url
-          }
-          forms {
-            title
-            slug
-          }
-        }
-        menuPills: pills {
-          title
-          forms {
-            title
-            slug
-          }
-        }
-      }
-    `;
-    const enQuery = gql`
-      fragment pagesFragment on Page {
-        title_en
-        slug
-
-        itemsOrder
-        icon {
-          url
-        }
-      }
-      query pagesQuery($mainSlug: String!) {
-        mainPage: pages(where: { slug: $mainSlug }) {
-          title_en
-          description_en
-          content_en
-          img {
-            url
-          }
-        }
-        storyPage: pages(where: { slug: "story" }) {
-          ...pagesFragment
-        }
-        charityPage: pages(where: { slug: "charity" }) {
-          ...pagesFragment
-        }
-        missionPage: pages(where: { slug: "mission" }) {
-          ...pagesFragment
-        }
-        teamPage: pages(where: { slug: "team" }) {
-          ...pagesFragment
-        }
-        pagePills: pills {
-          title_en
-          description_en
-
-          img {
-            url
-          }
-          forms {
-            title_en
-            slug
-          }
-        }
-        menuPills: pills {
-          title_en
-          forms {
-            title_en
-            slug
-          }
-        }
-      }
-    `;
-
-    let data;
-    let localeData;
+    let query;
     if (locale === "ru") {
-      console.log("RUSSIAN LANG");
-      localeData = {};
-      const { data: ruData } = await client.query({
-        variables: {
-          mainSlug: "catalog"
-        },
-        query: ruQuery
-      });
-      const pages = [
-        ...ruData.storyPage,
-        ...ruData.charityPage,
-        ...ruData.missionPage,
-        ...ruData.teamPage
-      ];
-      ruData.aboutPages = pages;
-      data = ruData;
+      query = gql`
+        query pagesQuery {
+          locales(where: { name: "ru" }) {
+            vacancies
+            catalog
+            aboutUs
+            mainPage
+            contacts
+            copyright
+            name
+            readMore
+            catalogContraindications
+            catalogDiffForms
+          }
+          mainPage: pages(where: { slug: "catalog" }) {
+            title
+            description
+            content
+            img {
+              url
+            }
+          }
+          aboutPages: pages(
+            sort: "itemsOrder:ask"
+            where: { slug: ["story", "charity", "mission", "team"] }
+          ) {
+            title
+            slug
+            itemsOrder
+          }
+          pagePills: pills(sort: "title:ask") {
+            title
+            description
+
+            img {
+              url
+            }
+            forms {
+              title
+              slug
+            }
+          }
+        }
+      `;
     } else if (locale === "en") {
-      console.log("en LANG");
-      const { data: enData } = await client.query({
-        variables: {
-          mainSlug: "catalog"
-        },
-        query: enQuery
-      });
-      for (let dataItem of Object.keys(enData)) {
-        enData[dataItem] = enData[dataItem].map(item => {
+      query = gql`
+        query pagesQuery {
+          locales(where: { name: "en" }) {
+            vacancies
+            catalog
+            aboutUs
+            mainPage
+            contacts
+            copyright
+            name
+            readMore
+            catalogContraindications
+            catalogDiffForms
+          }
+          mainPage: pages(where: { slug: "catalog" }) {
+            title_en
+            description_en
+            content_en
+            img {
+              url
+            }
+          }
+          aboutPages: pages(
+            sort: "itemsOrder:ask"
+            where: { slug: ["story", "charity", "mission", "team"] }
+          ) {
+            title_en
+            slug
+            itemsOrder
+          }
+          pagePills: pills(sort: "title:ask") {
+            title_en
+            description_en
+
+            img {
+              url
+            }
+            forms {
+              title_en
+              slug
+            }
+          }
+        }
+      `;
+    }
+
+    let { data } = await client.query({
+      query: query
+    });
+
+    if (locale === "en") {
+      for (let dataItem of Object.keys(data)) {
+        data[dataItem] = data[dataItem].map(item => {
           let newObj = {};
           for (let i of Object.keys(item)) {
             if (i.includes("_en")) {
@@ -230,62 +197,30 @@ export default {
           return newObj;
         });
       }
-      const pages = [
-        ...enData.storyPage,
-        ...enData.charityPage,
-        ...enData.missionPage,
-        ...enData.teamPage
-      ];
-      enData.aboutPages = pages;
-      data = enData;
     }
+    ctx.store.commit("pills", data.pagePills);
 
-    ctx.store.commit(
-      "pills",
-      data.menuPills.sort((a, b) => {
-        // console.log(a);
-        if (a.title < b.title) {
-          return -1;
-        }
-        if (a.title > b.title) {
-          return 1;
-        }
-        // return 0;
-      })
-    );
-    // const pages = [
-    //   ...data.storyPage,
-    //   ...data.charityPage,
-    //   ...data.missionPage,
-    //   ...data.teamPage
-    // ];
-    ctx.store.commit(
-      "aboutPages",
-      data.aboutPages.sort((a, b) => a.itemsOrder - b.itemsOrder)
-    );
+    ctx.store.commit("aboutPages", data.aboutPages);
+    ctx.store.commit("locale", data.locales[0]);
 
     return {
-      pills: data.pagePills.sort((a, b) => {
-        // console.log(a);
-        if (a.title < b.title) {
-          return -1;
-        }
-        if (a.title > b.title) {
-          return 1;
-        }
-        // return 0;
-      }),
       page: data.mainPage[0]
     };
   },
   data() {
     return {
-      imageBaseUrl: "http://localhost:1337"
+      imageBaseUrl: process.env.imageBaseUrl
     };
   },
   computed: {
-    locale() {
+    currLocale() {
       return this.$i18n.locale;
+    },
+    locale() {
+      return this.$store.state.locale;
+    },
+    pills() {
+      return this.$store.state.pills;
     }
   }
 };

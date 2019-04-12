@@ -27,7 +27,9 @@ export default {
   formTitle: "Форма обратной связи",
   badReaction: "Нежелaтельная реакция",
   badReactionText: "Если Вы хотите сообщить о нежелательном явлении/реакции или жалобе на качество продукции компании, пожалуйста, передайте информацию удобным вам способом:",
-  badReactionAddress: "АО «Си Эс Си ЛТД», 115230, г. Москва, Варшавское шоссе, д.47, кор.4, 14 этаж"
+  badReactionAddress: "АО «Си Эс Си ЛТД», 115230, г. Москва, Варшавское шоссе, д.47, кор.4, 14 этаж",
+  catalogContraindications: "There are contraindications. Read the drug label and check with your physician before use."
+
 }
 // export default () => {
 //   return new Promise(function (resolve) {

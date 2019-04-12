@@ -39,7 +39,7 @@ import gql from "graphql-tag";
 export default {
   data() {
     return {
-      imageBaseUrl: "http://localhost:1337"
+      imageBaseUrl: process.env.imageBaseUrl
     };
   },
   head() {
@@ -58,119 +58,102 @@ export default {
   async asyncData(ctx) {
     const locale = ctx.app.i18n.locale;
     let client = ctx.app.apolloProvider.defaultClient;
-    const ruQuery = gql`
-      fragment pagesFragment on Page {
-        title
-        slug
-        description
-        itemsOrder
-        icon {
-          url
-        }
-      }
-      query pagesQuery($mainSlug: String!) {
-        vacancies {
-          title
-          city
-          slug
-          description
-        }
-        mainPage: pages(where: { slug: $mainSlug }) {
-          title
-          description
-          img {
-            url
+
+    let query;
+    if (locale === "ru") {
+      query = gql`
+        query pagesQuery {
+          locales(where: { name: "ru" }) {
+            vacancies
+            catalog
+            aboutUs
+            mainPage
+            contacts
+            copyright
+            name
           }
-        }
+          vacancies {
+            title
+            city
+            slug
+            description
+          }
+          mainPage: pages(where: { slug: "vacancies" }) {
+            title
+            description
+            img {
+              url
+            }
+          }
 
-        storyPage: pages(where: { slug: "story" }) {
-          ...pagesFragment
-        }
-        charityPage: pages(where: { slug: "charity" }) {
-          ...pagesFragment
-        }
-        missionPage: pages(where: { slug: "mission" }) {
-          ...pagesFragment
-        }
-        teamPage: pages(where: { slug: "team" }) {
-          ...pagesFragment
-        }
-
-        pills {
-          title
-          forms {
+          aboutPages: pages(
+            sort: "itemsOrder:ask"
+            where: { slug: ["story", "charity", "mission", "team"] }
+          ) {
             title
             slug
+            itemsOrder
+          }
+
+          pills(sort: "title:ask") {
+            title
+            forms {
+              title
+              slug
+            }
           }
         }
-      }
-    `;
-    const enQuery = gql`
-      fragment pagesFragment on Page {
-        title_en
-        slug
-        description_en
-        itemsOrder
-        icon {
-          url
-        }
-      }
-      query pagesQuery($mainSlug: String!) {
-        vacancies {
-          title_en
-          city_en
-          slug
-          description_en
-        }
-        mainPage: pages(where: { slug: $mainSlug }) {
-          title_en
-          description_en
-          img {
-            url
+      `;
+    } else if (locale === "en") {
+      query = gql`
+        query pagesQuery {
+          locales(where: { name: "en" }) {
+            vacancies
+            catalog
+            aboutUs
+            mainPage
+            contacts
+            copyright
+            name
           }
-        }
-
-        storyPage: pages(where: { slug: "story" }) {
-          ...pagesFragment
-        }
-        charityPage: pages(where: { slug: "charity" }) {
-          ...pagesFragment
-        }
-        missionPage: pages(where: { slug: "mission" }) {
-          ...pagesFragment
-        }
-        teamPage: pages(where: { slug: "team" }) {
-          ...pagesFragment
-        }
-
-        pills {
-          title_en
-          forms {
+          vacancies {
+            title_en
+            city_en
+            slug
+            description_en
+          }
+          mainPage: pages(where: { slug: "vacancies" }) {
+            title_en
+            description_en
+            img {
+              url
+            }
+          }
+          aboutPages: pages(
+            sort: "itemsOrder:ask"
+            where: { slug: ["story", "charity", "mission", "team"] }
+          ) {
             title_en
             slug
+            itemsOrder
+          }
+
+          pills(sort: "title:ask") {
+            title_en
+            forms {
+              title_en
+              slug
+            }
           }
         }
-      }
-    `;
-    let data;
-    if (locale === "ru") {
-      const { data: ruData } = await client.query({
-        variables: {
-          mainSlug: "vacancies"
-        },
-        query: ruQuery
-      });
-      data = ruData;
-      console.log("RUSSIAN LANG");
-    } else if (locale === "en") {
-      const { data: enData } = await client.query({
-        variables: {
-          mainSlug: "vacancies"
-        },
-        query: enQuery
-      });
-      for (let dataItem of Object.keys(enData)) {
-        enData[dataItem] = enData[dataItem].map(item => {
+      `;
+    }
+    const { data } = await client.query({
+      query: query
+    });
+    if (locale === "en") {
+      for (let dataItem of Object.keys(data)) {
+        data[dataItem] = data[dataItem].map(item => {
           let newObj = {};
           for (let i of Object.keys(item)) {
             if (i.includes("_en")) {
@@ -182,45 +165,27 @@ export default {
           return newObj;
         });
       }
-      data = enData;
-      console.log("en LANG");
     }
-    const sortPills = data.pills.sort((a, b) => {
-      if (a.title < b.title) {
-        return -1;
-      }
-      if (a.title > b.title) {
-        return 1;
-      }
-      return 0;
-    });
-    const pages = [
-      ...data.storyPage,
-      ...data.charityPage,
-      ...data.missionPage,
-      ...data.teamPage
-    ];
-    ctx.store.commit("pills", sortPills);
-    ctx.store.commit("aboutPages", pages.sort((a, b) => a.order - b.order));
+    // const sortPills = data.pills
+    // .sort((a, b) => {
+    //   if (a.title < b.title) {
+    //     return -1;
+    //   }
+    //   if (a.title > b.title) {
+    //     return 1;
+    //   }
+    //   return 0;
+    // });
+    // const pages = data.aboutPages;
+    ctx.store.commit("pills", data.pills);
+    ctx.store.commit("aboutPages", data.aboutPages);
+    ctx.store.commit("locale", data.locales[0]);
+
     return {
       vacancy: data.vacancies,
       page: data.mainPage[0]
     };
   }
-
-  // computed: {
-  //   vacanсies() {
-  //     return this.$store.state.vacanсies;
-  //   }
-  // }
 };
 </script>
 
-<style lang="scss" scoped>
-// .main-bg {
-//   min-height: 40vh;
-//   // .main-bg-image {
-//   //   background-image: url(~assets/img/bg/vacancies.jpg);
-//   // }
-// }
-</style>

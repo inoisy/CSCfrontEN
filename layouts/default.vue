@@ -17,6 +17,7 @@
             <v-list-tile
               v-for="it in item.items"
               :key="it.title"
+              nuxt
               :to="it.forms && it.forms.length > 0 ? localePath({ name: 'catalog-slug', params: { slug: it.forms[0].slug } }) : localePath({ name: 'about-slug', params: { slug: it.slug } })"
             >
               <v-list-tile-content class="ml-4">{{ it.title }}</v-list-tile-content>
@@ -31,18 +32,10 @@
       </v-list>
     </v-navigation-drawer>
     <v-toolbar fixed color="rgba(17, 51, 58, 0.72)" class="app-toolbar header" height="56">
-      <nuxt-link :to="localePath('index')" class="fill-height" nuxt>
+      <nuxt-link :to="localePath('index')" class="fill-height">
         <img :src="require('~/assets/images/logo.png')" class="fill-height">
       </nuxt-link>
-      <v-btn
-        dark
-        flat
-        nuxt
-        v-for="item in locales"
-        :key="item.code"
-        :to="switchLocalePath(item.code)"
-        class="fill-height"
-      >{{item.code}}</v-btn>
+
       <v-spacer/>
       <template v-for="(item,index) in navigation">
         <v-menu
@@ -89,6 +82,15 @@
           :to="localePath(item.to)"
         >{{item.title}}</v-btn>
       </template>
+      <v-btn
+        dark
+        flat
+        nuxt
+        v-for="item in locales"
+        :key="item.code"
+        :to="switchLocalePath(item.code)"
+        class="fill-height my-3"
+      >{{item.code}}</v-btn>
       <v-btn icon @click.stop="drawer = !drawer" class="ml-auto hidden-md-and-up">
         <v-icon color="white">menu</v-icon>
       </v-btn>
@@ -97,11 +99,11 @@
       <nuxt/>
     </v-content>
     <v-footer dark class="footer" style="height: auto" color="#11333A">
-      <v-container class="py-5">
+      <v-container class="py-5 footer-wrapper">
         <v-layout class="footer-inner">
           <v-flex
             class="footer-copy text-xs-center text-md-left display-flex align-center"
-          >© CSC Ltd Russia. {{ $t("copyright") }}</v-flex>
+          >© CSC Ltd Russia. {{ locale.copyright }}</v-flex>
           <v-flex class="display-flex layout wrap justify-space-around">
             <nuxt-link
               v-for="(item,index) in navigation"
@@ -120,10 +122,14 @@
 <style lang="scss" >
 @media (max-width: 960px) {
   .footer-inner {
-    flex-wrap: wrap-reverse !important;
+    flex-direction: column-reverse;
+    //   flex-wrap: wrap-reverse !important;
+  }
+  .footer-wrapper {
+    padding-bottom: 2rem !important;
   }
   .footer-copy {
-    margin-top: 24px;
+    margin-top: 4rem;
     text-align: center;
     justify-content: center;
   }
@@ -136,7 +142,7 @@
   }
 }
 .header {
-  .v-btn--active:after {
+  .header-link.v-btn--active:after {
     content: "";
     position: absolute;
     width: 100%;
@@ -161,40 +167,40 @@
   a:hover {
     color: #19bcdb;
   }
-  .links-list {
-    display: flex;
-    flex-direction: column;
-  }
-  .contacts-list {
-    display: flex;
-    flex-direction: column;
-    a {
-      display: inline-flex;
-      align-items: center;
-      .contacts-icon {
-        color: currentColor;
-      }
-    }
-  }
+  // .links-list {
+  //   display: flex;
+  //   flex-direction: column;
+  // }
+  // .contacts-list {
+  //   display: flex;
+  //   flex-direction: column;
+  //   a {
+  //     display: inline-flex;
+  //     align-items: center;
+  //     .contacts-icon {
+  //       color: currentColor;
+  //     }
+  //   }
+  // }
 }
 
-@media (max-width: 600px) {
-  .footer {
-    .links-list {
-      flex-direction: row;
-      justify-content: center;
-      flex-wrap: wrap;
-      a {
-        margin-left: 10px;
-        margin-right: 10px;
-      }
-    }
-    .contacts-list {
-      justify-content: center;
-      align-items: center;
-    }
-  }
-}
+// @media (max-width: 600px) {
+//   .footer {
+//     .links-list {
+//       flex-direction: row;
+//       justify-content: center;
+//       flex-wrap: wrap;
+//       a {
+//         margin-left: 10px;
+//         margin-right: 10px;
+//       }
+//     }
+//     .contacts-list {
+//       justify-content: center;
+//       align-items: center;
+//     }
+//   }
+// }
 </style>
 
 <script>
@@ -206,7 +212,7 @@ export default {
   },
   computed: {
     locale() {
-      return this.$i18n.locale;
+      return this.$store.state.locale;
     },
     locales() {
       return this.$i18n.locales.filter(item => item.code !== this.$i18n.locale);
@@ -214,12 +220,12 @@ export default {
     navigation() {
       return [
         {
-          title: this.$t("index"),
+          title: this.locale.mainPage,
           to: "index",
           items: []
         },
         {
-          title: this.$t("catalog"),
+          title: this.locale.catalog,
           to: "catalog",
           items: this.$store.state.pills
           // .map(item => {
@@ -234,7 +240,7 @@ export default {
           // })
         },
         {
-          title: this.$t("about"),
+          title: this.locale.aboutUs,
           to: "about",
           items: this.$store.state.aboutPages
           // .map(item => {
@@ -250,12 +256,12 @@ export default {
           // })
         },
         {
-          title: this.$t("vacancies"),
+          title: this.locale.vacancies,
           to: "vacancies",
           items: []
         },
         {
-          title: this.$t("contacts"),
+          title: this.locale.contacts,
           to: "contacts",
           items: []
         }
