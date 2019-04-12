@@ -18,8 +18,8 @@ const axios = require('axios')
 // }))
 // const i18nExtensions = require('vue-i18n-extensions')
 // const path = require('path')
-const baseUrl = process.env.BASE_URL || "http://cscpharma.jelastic.regruhosting.ru"
-const imageBaseUrl = process.env.IMAGE_BASE_URL || "http://cscpharma.jelastic.regruhosting.ru"
+const baseUrl = process.env.BASE_URL || "http://docker165641-env-0415307.jelastic.regruhosting.ru"
+const imageBaseUrl = process.env.IMAGE_BASE_URL || "http://docker165641-env-0415307.jelastic.regruhosting.ru"
 
 module.exports = {
   mode: 'universal',

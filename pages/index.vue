@@ -114,7 +114,13 @@
                 data-aos="zoom-in"
               >
                 <div class="image-wrapper py-5 px-4 display-flex align-center">
-                  <img v-if="item.img" :src="imageBaseUrl+item.img.url" :alt="item.title">
+                  <img
+                    v-if="item.img"
+                    :src="imageBaseUrl+item.img.url"
+                    :alt="item.title"
+                    class="swiper-lazy"
+                  >
+                  <div class="swiper-lazy-preloader"></div>
                 </div>
                 <div class="pa-3">
                   <h3 class="mb-2" v-text="item.title"/>
