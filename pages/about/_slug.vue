@@ -15,7 +15,7 @@
     <div class="pt-5 container" v-html="page.content"></div>
     <v-container class="py-5" grid-list-xl v-if="page.gallery && page.gallery.length > 0">
       <v-layout wrap>
-        <h2 class="flex xs12 mb-4">{{$t('gallery')}}</h2>
+        <h2 class="flex xs12 mb-4">{{locale.gallery}}</h2>
         <v-flex xs12>
           <v-carousel height="auto">
             <v-carousel-item v-for="(item,i) in page.gallery" :key="i">
@@ -27,7 +27,7 @@
     </v-container>
     <v-container class="py-5" grid-list-xl>
       <v-layout wrap class>
-        <h3 class="xs12 flex" data-aos="fade-in">{{$t('readMore')}}</h3>
+        <h3 class="xs12 flex" data-aos="fade-in">{{locale.readAlso}}</h3>
         <div
           class="xs12 sm6 lg4 flex"
           data-aos="fade-up"
