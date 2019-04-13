@@ -116,7 +116,7 @@
                 <div class="image-wrapper py-5 px-4 display-flex align-center">
                   <img
                     v-if="item.img"
-                    :src="imageBaseUrl+item.img.url"
+                    :data-src="imageBaseUrl+item.img.url"
                     :alt="item.title"
                     class="swiper-lazy"
                   >
@@ -592,7 +592,7 @@ export default {
     return {
       imageBaseUrl: process.env.imageBaseUrl,
       swiperOption: {
-        loop: true,
+        loop: false,
         slidesPerView: "auto",
 
         preloadImages: false,

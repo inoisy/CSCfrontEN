@@ -209,6 +209,10 @@ module.exports = {
       // lazy: true,
       // langDir: 'lang/'
     }],
+    ['@nuxtjs/component-cache', {
+      max: 10000,
+      maxAge: 1000 * 60 * 60
+    }],
   ],
 
   sitemap: {
