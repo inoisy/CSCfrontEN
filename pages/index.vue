@@ -29,7 +29,6 @@
       <div
         ref="mainWrapper"
         class="main-wrapper flex xs10 md8 lg7 xl6 position-relative text-xs-center"
-        data-aos="zoom-in"
       >
         <h1 class="main-header mb-4 text--accent" v-text="page.title"></h1>
         <p class="display-2 mb-4" v-text="page.description"></p>
@@ -221,6 +220,15 @@
   </div>
 </template>
 <style lang="scss" scoped>
+@keyframes zoomIn {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 .page-title {
   font-size: 3rem;
   font-weight: normal;
@@ -246,6 +254,7 @@
   }
 }
 .main-wrapper {
+  animation: 0.5s ease-out 0s 1 zoomIn;
   margin-top: calc(56px + 48px) !important;
   margin-bottom: 48px;
 }

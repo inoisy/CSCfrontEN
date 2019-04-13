@@ -32,7 +32,7 @@
               large
               dark
               @click="dialog=true"
-            >{{$t('writeResume')}}</v-btn>
+            >Заполнить заявку</v-btn>
 
             <v-btn
               data-aos="fade-in"
@@ -42,7 +42,7 @@
               href="mailto:office@cscpharma.ru"
               tag="a"
               large
-            >{{$t('sendResume')}}</v-btn>
+            >Отправить резюме</v-btn>
           </div>
         </v-flex>
       </v-layout>
@@ -238,11 +238,11 @@ export default {
     breadcrumbsItems() {
       return [
         {
-          text: this.$t("index"),
+          text: this.$store.state.locale.mainPage,
           to: this.localePath("index")
         },
         {
-          text: this.$t("vacancies"),
+          text: this.$store.state.locale.aboutUs,
           to: this.localePath("vacancies")
         },
         // {
