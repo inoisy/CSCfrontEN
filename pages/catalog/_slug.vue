@@ -111,6 +111,7 @@
                 :href="pill.otherwebsitelink"
               >{{pill.otherwebsitelink}}</a>
             </p>
+
             <v-btn
               v-if="description && !access"
               class="ml-0 mb-3"
@@ -135,7 +136,10 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
-            <div v-if="access" v-html="description"/>
+            <v-slide-y-transition>
+              <div v-if="description && access" v-html="description"/>
+            </v-slide-y-transition>
+
             <p class="font-italic caption mb-0">{{locale.catalogContraindications}}</p>
           </div>
         </div>
@@ -919,25 +923,6 @@ export default {
         });
       }
     }
-    //   ...data.storyPage,
-    //   ...data.charityPage,
-    //   ...data.missionPage,
-    //   ...data.teamPage
-    // ];
-    // .sort((a, b) => {
-    //   // console.log(a);
-    //   if (a.title < b.title) {
-    //     return -1;
-    //   }
-    //   if (a.title > b.title) {
-    //     return 1;
-    //   }
-    //   return 0;
-    // });
-    //  const pages = ;
-    //      const sortPills =;
-
-    // [
     ctx.store.commit("pills", data.pills);
     ctx.store.commit("aboutPages", data.aboutPages);
     let bg = data.bgPage[0];
@@ -946,8 +931,6 @@ export default {
       (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
     );
     ctx.store.commit("locale", data.locales[0]);
-
-    // console.log(form.img);
     return {
       ...form,
       bg
@@ -980,7 +963,7 @@ export default {
           to: this.localePath("index")
         },
         {
-          text: this.$store.state.locale.aboutUs,
+          text: this.$store.state.locale.catalog,
           to: this.localePath("catalog")
         },
         {
