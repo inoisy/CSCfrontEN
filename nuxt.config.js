@@ -18,7 +18,7 @@ const axios = require('axios')
 // }))
 // const i18nExtensions = require('vue-i18n-extensions')
 // const path = require('path')
-const envUrl = process.env.BASE_URL || "https://docker165641-env-0415307.jelastic.regruhosting.ru"
+const envUrl = process.env.BASE_URL || "http://docker165641-env-0415307.jelastic.regruhosting.ru"
 const baseUrl = envUrl
 const imageBaseUrl = process.env.IMAGE_BASE_URL || envUrl //"http://docker165641-env-0415307.jelastic.regruhosting.ru"
 
