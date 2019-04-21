@@ -254,7 +254,7 @@
   }
 }
 .main-wrapper {
-  animation: 0.5s ease-out 0s 1 zoomIn;
+  // animation: 0.5s ease-out 0s 1 zoomIn;
   margin-top: calc(56px + 48px) !important;
   margin-bottom: 48px;
 }
