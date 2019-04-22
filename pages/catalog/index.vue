@@ -24,7 +24,7 @@
               <img
                 v-if="item && item.img"
                 class="img mx-auto"
-                :src="imageBaseUrl+item.img.url"
+                v-lazy="imageBaseUrl+item.img.url"
                 :alt="item.title"
               >
             </v-flex>

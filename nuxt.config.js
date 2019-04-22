@@ -203,6 +203,7 @@ module.exports = {
       src: '@/plugins/aos.js',
       ssr: false
     },
+    "~/plugins/lazyload.js"
     // {
     //   src: '@/plugins/apollo-fetch.js',
     //   ssr: true

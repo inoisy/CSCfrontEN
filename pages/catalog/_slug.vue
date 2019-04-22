@@ -24,10 +24,7 @@
         >{{currLocale==="ru" ? item.title : item.title_en }}</v-btn>
       </div>
     </div>
-    <section
-      class="product-wrapper-outer"
-      :style="`background-image: url(${require('~/assets/bg1.jpg')}); `"
-    >
+    <section class="product-wrapper-outer" v-lazy:background-image="require('~/assets/bg1.jpg')">
       <v-container class="py-5 product-wrapper">
         <div class="product-infolayout wrap">
           <div class="flex product-text">
@@ -154,7 +151,7 @@
           >
             <v-carousel-item lazy v-for="(item,i) in img" :key="i">
               <div class="slide-wrapper">
-                <img :src="imageBaseUrl+item.url">
+                <img v-lazy="imageBaseUrl+item.url">
               </div>
             </v-carousel-item>
           </v-carousel>
@@ -352,7 +349,7 @@
           >
             <a class="px-4 pillLink" :href="item.href" target="_blank">
               <img
-                :src="imageBaseUrl+ item.pharmacy.img.url"
+                v-lazy="imageBaseUrl+ item.pharmacy.img.url"
                 :alt="item.pharmacy.name"
                 :title="item.pharmacy.name"
               >
@@ -397,7 +394,7 @@
                 <div class="img-wrapper" data-aos="fade-in" v-if="pill.manufacturer.img">
                   <img
                     class="mb-4"
-                    :src="imageBaseUrl+pill.manufacturer.img.url"
+                    v-lazy="imageBaseUrl+pill.manufacturer.img.url"
                     :alt="currLocale==='ru' ? pill.manufacturer.title : pill.manufacturer.title_en"
                     style="display: block; width: 100%; border: 1px solid #919899; border-radius: 15px;"
                   >

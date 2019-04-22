@@ -22,7 +22,7 @@
             <v-flex xs12>
               <v-carousel height="auto" style="height: auto">
                 <v-carousel-item v-for="(item,i) in page.gallery" :key="i">
-                  <v-img :src="imageBaseUrl+item.url" :aspect-ratio="14/9"></v-img>
+                  <img v-lazy="imageBaseUrl+item.url">
                 </v-carousel-item>
               </v-carousel>
             </v-flex>

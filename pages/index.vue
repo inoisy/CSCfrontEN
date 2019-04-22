@@ -53,7 +53,7 @@
         <span class="bottom_corners"></span>
       </div>
     </section>
-    <section class="about-us" :style="`background-image: url(${require('~/assets/bg1.jpg')});`">
+    <section class="about-us" v-lazy:background-image="require('~/assets/bg1.jpg')">
       <v-container grid-list-xl class="py-5">
         <v-layout wrap class>
           <div class="flex xs12" data-aos="fade-in" v-html="page.content"></div>
@@ -73,7 +73,7 @@
               <img
                 v-if="item.icon"
                 class="mx-auto d-block my-3 about-icon"
-                :src="imageBaseUrl+item.icon.url"
+                v-lazy="imageBaseUrl+item.icon.url"
                 :alt="item.title"
               >
               <div>
@@ -89,7 +89,7 @@
       </v-container>
     </section>
 
-    <section class="pills">
+    <section class="pills" v-lazy:background-image="require('~/assets/images/pills.jpg')">
       <div class="px-3 py-5 my-auto text-xs-center">
         <h2 class="mb-5 page-title" data-aos="fade-in">{{ locale.ourProducts }}</h2>
         <v-container v-swiper:mySwiper="swiperOption">
@@ -180,7 +180,7 @@
                   <img
                     style="width: 50px; height: 50px"
                     v-if="item.img"
-                    :src="imageBaseUrl+item.img.url"
+                    v-lazy="imageBaseUrl+item.img.url"
                     :alt="item.title+' - CSCPharma'"
                   >
                 </div>
@@ -208,10 +208,10 @@
               target="_blank"
               class="display-flex ma-auto px-4 my-3 mb-5 flex"
             >
-              <img class="d-block ma-auto" :src="imageBaseUrl+item.logo.url" :alt="item.title">
+              <img class="d-block ma-auto" v-lazy="imageBaseUrl+item.logo.url" :alt="item.title">
             </a>
             <div v-else-if="item.logo" class="display-flex ma-auto px-4 my-3 mb-5 flex">
-              <img class="d-block ma-auto" :src="imageBaseUrl+item.logo.url" :alt="item.title">
+              <img class="d-block ma-auto" v-lazy="imageBaseUrl+item.logo.url" :alt="item.title">
             </div>
           </div>
         </v-layout>
@@ -237,7 +237,7 @@
 @import "swiper/dist/css/swiper.css";
 
 .pills {
-  background-image: url(~assets/images/pills.jpg);
+  // background-image: url(~assets/images/pills.jpg);
   background-size: cover;
   background-position-x: center;
   background-position-y: top;
