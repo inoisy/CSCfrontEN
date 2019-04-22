@@ -39,6 +39,7 @@ module.exports = {
     interval: 300,
     dir: 'public',
     subFolders: false,
+    fallback: "404.html",
     minify: {
       collapseBooleanAttributes: true,
       collapseWhitespace: false,
