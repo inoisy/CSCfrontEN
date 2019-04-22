@@ -106,15 +106,15 @@ module.exports = {
         }
       })
       const staticItems = ['/', '/catalog', '/vacancies', '/contacts']
-      // const staticItemsEn = ['/en', '/en/catalog', '/en/vacancies', '/en/contacts']
+      const staticItemsEn = ['/en', '/en/catalog', '/en/vacancies', '/en/contacts']
       const staticRoutes = staticItems.map(item => {
         return {
           route: item
         }
       })
-      const staticRoutesEn = staticItems.map(item => {
+      const staticRoutesEn = staticItemsEn.map(item => {
         return {
-          route: '/en' + item
+          route: item
         }
       })
       const routes = [...staticRoutesEn, ...staticRoutes, ...aboutItems, ...aboutItemsEn, ...formsItemsEn, ...formsItems, ...vacanciesItemsEn, ...vacanciesItems]
