@@ -913,7 +913,7 @@ export default {
             if (i.includes("_en")) {
               newObj[i.replace("_en", "")] = item[i];
             } else if (!Array.isArray(item[i]) && typeof item[i] === "object") {
-              console.log("OBJECT!", item[i]);
+              // console.log("OBJECT!", item[i]);
               newObj[i] = item[i];
             } else {
               newObj[i] = item[i];
