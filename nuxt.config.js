@@ -36,7 +36,7 @@ module.exports = {
    ** Headers of the page
    */
   generate: {
-    // interval: 1000,~
+    interval: 300,
     dir: 'public',
     subFolders: false,
     minify: {
