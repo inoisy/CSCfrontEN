@@ -5,24 +5,28 @@
         class="main-bg-image"
         :style="bg.img ? `background-image: url(${imageBaseUrl+bg.img.url});` : ''"
       ></div>
-      <v-container class="position-relative fill-height ma-auto pt-5" style="padding-bottom: 80px;">
+      <v-container class="position-relative fill-height ma-auto pt-5 pb-0">
         <v-layout>
           <v-flex class="xs12 text-xs-center">
             <h1 class="mb-4" v-text="header"/>
-            <breadcrumbs :items="breadcrumbsItems"/>
+            <breadcrumbs class="mb-5" :items="breadcrumbsItems"/>
+            <div
+              class="display-flex justify-center"
+              v-if="tabs && tabs.length>1"
+              style="flex-wrap:wrap"
+            >
+              <v-btn
+                flat
+                v-for="item in tabs"
+                :key="item.title"
+                class="ma-0"
+                :to="localePath({ name: 'catalog-slug', params: { slug: item.slug } })"
+                nuxt
+              >{{currLocale==="ru" ? item.title : item.title_en }}</v-btn>
+            </div>
           </v-flex>
         </v-layout>
       </v-container>
-      <div class="forms-tabs-wrapper display-flex justify-center" v-if="tabs && tabs.length>1">
-        <v-btn
-          flat
-          v-for="item in tabs"
-          :key="item.title"
-          class="ma-0"
-          :to="localePath({ name: 'catalog-slug', params: { slug: item.slug } })"
-          nuxt
-        >{{currLocale==="ru" ? item.title : item.title_en }}</v-btn>
-      </div>
     </div>
     <section class="product-wrapper-outer" v-lazy:background-image="require('~/assets/bg1.jpg')">
       <v-container class="py-5 product-wrapper">
