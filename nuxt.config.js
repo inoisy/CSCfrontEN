@@ -119,7 +119,7 @@ module.exports = {
         }
       })
       const routes = [...staticRoutesEn, ...staticRoutes, ...aboutItems, ...aboutItemsEn, ...formsItemsEn, ...formsItems, ...vacanciesItemsEn, ...vacanciesItems]
-      console.log("TCL: routes", routes)
+      // console.log("TCL: routes", routes)
       // "http://localhost:8080/forms"
       // const ruRoutes = [...aboutItems, ...formsItems, ...vacanciesItems]
       // console.log("TCL: ruRoutes", ruRoutes)
@@ -325,7 +325,7 @@ module.exports = {
       new VuetifyLoaderPlugin(),
     ],
 
-    transpile: [/^vuetify/, /^aos/, /^vue-awesome-swiper/, /^@nuxtjs\/apollo/, "vue2-google-maps", "vue-particles"],
+    transpile: [/^vuetify/, /^aos/, /^vue-awesome-swiper/, /^@nuxtjs\/apollo/, /^vue2-google-maps($|\/)/, "vue-particles"],
 
     /*
      ** You can extend webpack config here

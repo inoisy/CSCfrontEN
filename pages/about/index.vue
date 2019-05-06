@@ -195,7 +195,7 @@ export default {
             }
           }
 
-          pills(sort: "title:ask") {
+          pills(sort: "title:ask", where: { title_ne: "Диалрапид" }) {
             title_en
             forms {
               title_en

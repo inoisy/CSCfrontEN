@@ -118,7 +118,10 @@ export default {
             slug
             itemsOrder
           }
-          pagePills: pills(sort: "title:ask") {
+          pagePills: pills(
+            sort: "title:ask"
+            where: { title_ne: "Диалрапид" }
+          ) {
             title
             description
 
@@ -163,7 +166,10 @@ export default {
             slug
             itemsOrder
           }
-          pagePills: pills(sort: "title:ask") {
+          pagePills: pills(
+            sort: "title:ask"
+            where: { title_ne: "Диалрапид" }
+          ) {
             title_en
             description_en
 

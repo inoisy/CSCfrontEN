@@ -5,29 +5,27 @@
         class="main-bg-image"
         :style="bg.img ? `background-image: url(${imageBaseUrl+bg.img.url});` : ''"
       ></div>
-      <v-container class="position-relative fill-height ma-auto pt-5 pb-0">
+      <v-container class="position-relative fill-height pt-5">
         <v-layout>
           <v-flex class="xs12 text-xs-center">
             <h1 class="mb-4" v-text="header"/>
-            <breadcrumbs class="mb-5" :items="breadcrumbsItems"/>
-            <div
-              class="display-flex justify-center"
-              v-if="tabs && tabs.length>1"
-              style="flex-wrap:wrap"
-            >
-              <v-btn
-                flat
-                v-for="item in tabs"
-                :key="item.title"
-                class="ma-0"
-                :to="localePath({ name: 'catalog-slug', params: { slug: item.slug } })"
-                nuxt
-              >{{currLocale==="ru" ? item.title : item.title_en }}</v-btn>
-            </div>
+            <breadcrumbs class="mb-4" :items="breadcrumbsItems"/>
           </v-flex>
         </v-layout>
       </v-container>
+      <div class="display-flex justify-center" v-if="tabs && tabs.length>1" style="flex-wrap:wrap">
+        <v-btn
+          flat
+          v-for="item in tabs"
+          :key="item.title"
+          class="ma-0 display-1"
+          :to="localePath({ name: 'catalog-slug', params: { slug: item.slug } })"
+          large
+          nuxt
+        >{{item.title || item.title_en }}</v-btn>
+      </div>
     </div>
+    <!-- {{pill.pilllink}} -->
     <section class="product-wrapper-outer" v-lazy:background-image="require('~/assets/bg1.jpg')">
       <v-container class="py-5 product-wrapper">
         <div class="product-infolayout wrap">
@@ -93,16 +91,16 @@
               <a
                 class="product-manufacturer"
                 @click="$vuetify.goTo('#manufacturer')"
-              >{{currLocale === 'ru' ? pill.manufacturer.title : pill.manufacturer.title_en }}</a>
+              >{{pill.manufacturer.title || pill.manufacturer.title_en }}</a>
             </p>
 
-            <p v-if="nepatentovannoeNaimenovanie">
+            <p v-if="nepatentovannoeNaimenovanieCurrLocale ">
               <strong>{{locale.catalogActiveIngredient}}:</strong>
-              {{nepatentovannoeNaimenovanie}}
+              {{nepatentovannoeNaimenovanieCurrLocale}}
             </p>
-            <p id="lekarstvennayaForma" v-if="lekarstvennayaForma">
+            <p id="lekarstvennayaForma" v-if="lekarstvennayaFormaCurrLocale">
               <strong>{{locale.catalogDosageForm}}:</strong>
-              {{lekarstvennayaForma}}
+              {{lekarstvennayaFormaCurrLocale}}
             </p>
             <p v-if="pill.otherwebsitelink">
               {{locale.catalogOtherWebsite}}:
@@ -114,7 +112,7 @@
             </p>
 
             <v-btn
-              v-if="description && !access"
+              v-if="descriptionCurrLocale && !access"
               class="ml-0 mb-3"
               @click="showDialog=true"
             >{{locale.readMore}}</v-btn>
@@ -138,7 +136,7 @@
               </v-card>
             </v-dialog>
             <v-slide-y-transition>
-              <div v-if="description && access" v-html="description"/>
+              <div v-if="descriptionCurrLocale && access" v-html="descriptionCurrLocale"/>
             </v-slide-y-transition>
 
             <p class="font-italic caption mb-0">{{locale.catalogContraindications}}</p>
@@ -192,17 +190,17 @@
           </v-tab-item>
           <v-tab ripple>Вся инструкция</v-tab>
           <v-tab-item class="pa-3">
-            <p v-if="torgovoeNazvanie">
+            <p v-if="torgovoeNazvanieCurrLocale">
               <strong>Торговое название:</strong>
-              {{torgovoeNazvanie}}
+              {{torgovoeNazvanieCurrLocale}}
             </p>
-            <p id="nepatentovannoeNaimenovanie" v-if="nepatentovannoeNaimenovanie">
+            <p id="nepatentovannoeNaimenovanie" v-if="nepatentovannoeNaimenovanieCurrLocale">
               <strong>Международное непатентованное наименование:</strong>
-              {{nepatentovannoeNaimenovanie}}
+              {{nepatentovannoeNaimenovanieCurrLocale}}
             </p>
-            <p id="lekarstvennayaForma" v-if="lekarstvennayaForma">
+            <p id="lekarstvennayaForma" v-if="lekarstvennayaFormaCurrLocale">
               <strong>Лекарственная форма:</strong>
-              {{lekarstvennayaForma}}
+              {{lekarstvennayaFormaCurrLocale}}
             </p>
 
             <div id="sostav" v-if="sostav">
@@ -343,11 +341,14 @@
           </v-tab-item>
         </v-tabs>
 
-        <v-layout class="justify-center" wrap v-if="pill.pilllinks && pill.pilllinks.length > 0">
-          <h2 data-aos="fade-in" class="my-5 xs12 flex mb-5 text-xs-center">{{locale.whereBuy}}</h2>
+        <v-layout class="justify-center" wrap v-if="pill.pilllink && pill.pilllink.length > 0">
+          <h2
+            data-aos="fade-in"
+            class="mt-5 xs12 flex mb-2 text-xs-center"
+          >{{locale.catalogWhereBuy}}</h2>
           <div
             class="justify-center flex xs6 sm4 md3 lg2 justify-center display-flex"
-            v-for="item in pill.pilllinks"
+            v-for="item in pill.pilllink"
             :key="item.href"
             data-aos="fade-in"
           >
@@ -390,22 +391,18 @@
             <div class="flex xs12 md6">
               <h2 class="mb-4" data-aos="fade-in">{{locale.catalogAboutManufacturer}}</h2>.
               <div class="manufacturer-content">
-                <h3
-                  class="display-4 mb-4"
-                  data-aos="fade-in"
-                  v-text="currLocale==='ru' ? pill.manufacturer.title : pill.manufacturer.title_en"
-                />
+                <h3 class="display-4 mb-4" data-aos="fade-in" v-text="manufacturerTitleCurrLocale"/>
                 <div class="img-wrapper" data-aos="fade-in" v-if="pill.manufacturer.img">
                   <img
                     class="mb-4"
                     v-lazy="imageBaseUrl+pill.manufacturer.img.url"
-                    :alt="currLocale==='ru' ? pill.manufacturer.title : pill.manufacturer.title_en"
+                    :alt="manufacturerTitleCurrLocale"
                     style="display: block; width: 100%; border: 1px solid #919899; border-radius: 15px;"
                   >
                 </div>
                 <div
                   class="font-weight-medium"
-                  v-html="currLocale==='ru' ? pill.manufacturer.description : pill.manufacturer.description_en "
+                  v-html=" pill.manufacturer.description || pill.manufacturer.description_en "
                   data-aos="fade-in"
                 />
               </div>
@@ -417,6 +414,10 @@
   </div>
 </template>
 <style lang="scss" scoped>
+.main-bg {
+  display: flex;
+  flex-direction: column;
+}
 .v-window-item,
 .v-window__container,
 .v-carousel__item {
@@ -616,21 +617,23 @@ import Breadcrumbs from "~/components/Breadcrumbs";
 import gql from "graphql-tag";
 export default {
   head() {
+    // const description = this.descriptionCurrLocale;
+    // console.log("TCL: head -> description", description);
     return {
-      title: this.header,
+      // title: this.header,
       meta: [
         // hid is used as unique identifier. Do not use `vmid` for it as it will not work
         {
           hid: "description",
           name: "description",
-          content:
-            this.pill.description && this.pill.description.length > 97
-              ? this.pill.description
-                  .substr(0, 97)
-                  .replace(/<.*>/gm, "")
-                  .trim()
-                  .concat("...")
-              : this.pill.description || ""
+          content: this.descriptionCurrLocale
+          // description && description.length > 97
+          //   ? description
+          //       .substr(0, 97)
+          //       .replace(/<.*>/gm, "")
+          //       .trim()
+          //       .concat("...")
+          //   : description || ""
         }
       ]
     };
@@ -820,7 +823,7 @@ export default {
               url
             }
           }
-          pills(sort: "title:ask") {
+          pills(sort: "title:ask", where: { title_ne: "Диалрапид" }) {
             title_en
             forms {
               title_en
@@ -862,6 +865,8 @@ export default {
               createdAt
             }
             pill {
+              title_en
+              description_en
               otherwebsitelink
               Articles {
                 url
@@ -938,6 +943,21 @@ export default {
     };
   },
   computed: {
+    torgovoeNazvanieCurrLocale() {
+      return this.torgovoeNazvanie; //|| this.torgovoeNazvanie_en;
+    },
+    descriptionCurrLocale() {
+      return this.description; //|| this.description_en;
+    },
+    lekarstvennayaFormaCurrLocale() {
+      return this.lekarstvennayaForma; //|| this.lekarstvennayaForma_en;
+    },
+    nepatentovannoeNaimenovanieCurrLocale() {
+      return this.nepatentovannoeNaimenovanie; //|| this.nepatentovannoeNaimenovanie_en
+    },
+    manufacturerTitleCurrLocale() {
+      return this.pill.manufacturer.title; //|| this.pill.manufacturer.title_en;
+    },
     locale() {
       return this.$store.state.locale;
     },
@@ -948,11 +968,24 @@ export default {
       return this.$store.state.access;
     },
     header() {
-      let add =
-        this.pill.forms && this.pill.forms.length > 1
-          ? " " + this.title.toLowerCase()
-          : "";
-      return this.torgovoeNazvanie + add;
+      // const locale = this.$store.state.locale;
+      // const torgovoeNazvanie =
+      //   locale === "ru" ? this.torgovoeNazvanie : this.torgovoeNazvanie_en;
+      // let add =
+      //   this.title && locale === "ru"
+      //     ? this.title.toLowerCase()
+      //     : this.title_en
+      //     ? this.title_en.toLowerCase()
+      //     : "";
+      // console.log(this.title);
+      // console.log("title_en", this.title_en);
+      // console.log("TCL: header -> add", add);
+
+      return (
+        (this.torgovoeNazvanie || this.torgovoeNazvanie_en) +
+        " " +
+        (this.title || this.title_en)
+      ); //torgovoeNazvanie; //+ " " + add;
     },
     tabs() {
       return this.pill.forms;
