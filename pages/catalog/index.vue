@@ -118,10 +118,7 @@ export default {
             slug
             itemsOrder
           }
-          pagePills: pills(
-            sort: "title:ask"
-            where: { title_ne: "Диалрапид" }
-          ) {
+          pagePills: pills(sort: "title:ask") {
             title
             description
 
