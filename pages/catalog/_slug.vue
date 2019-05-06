@@ -341,7 +341,12 @@
           </v-tab-item>
         </v-tabs>
 
-        <v-layout class="justify-center" wrap v-if="pill.pilllink && pill.pilllink.length > 0">
+        <v-layout
+          style="clear:both"
+          class="justify-center"
+          wrap
+          v-if="pill.pilllink && pill.pilllink.length > 0"
+        >
           <h2
             data-aos="fade-in"
             class="mt-5 xs12 flex mb-2 text-xs-center"
