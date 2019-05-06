@@ -6,7 +6,7 @@
       right
       temporary
       width="220px"
-      style="background-color: rgba(255,255,255,0.85)"
+      style="background-color: rgba(255,255,255,0.91)"
     >
       <v-list style="background: transparent">
         <template v-for="(item, i) in navigation">
