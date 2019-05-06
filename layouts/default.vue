@@ -12,7 +12,7 @@
         <template v-for="(item, i) in navigation">
           <v-list-group v-if="item.items.length>0" :key="i">
             <v-list-tile slot="activator" :to="localePath(item.to)">
-              <v-list-tile-content>{{ item.title }}</v-list-tile-content>
+              <v-list-tile-content>{{ item.title|| item.title_en }}</v-list-tile-content>
             </v-list-tile>
             <v-list-tile
               v-for="it in item.items"
@@ -20,12 +20,12 @@
               nuxt
               :to="it.forms && it.forms.length > 0 ? localePath({ name: 'catalog-slug', params: { slug: it.forms[0].slug } }) : localePath({ name: 'about-slug', params: { slug: it.slug } })"
             >
-              <v-list-tile-content class="ml-4">{{ it.title }}</v-list-tile-content>
+              <v-list-tile-content class="ml-4">{{ it.title|| it.title_en}}</v-list-tile-content>
             </v-list-tile>
           </v-list-group>
           <v-list-tile v-else :to="localePath(item.to)" :key="i" nuxt exact>
             <v-list-tile-content>
-              <v-list-tile-title v-text="item.title"/>
+              <v-list-tile-title v-text="item.title || item.title_en"/>
             </v-list-tile-content>
           </v-list-tile>
         </template>
