@@ -8,8 +8,8 @@
       <v-container class="position-relative fill-height pt-5">
         <v-layout>
           <v-flex class="xs12 text-xs-center">
-            <h1 class="mb-4" v-text="header"/>
-            <breadcrumbs class="mb-4" :items="breadcrumbsItems"/>
+            <h1 class="mb-4" v-text="header" />
+            <breadcrumbs class="mb-4" :items="breadcrumbsItems" />
           </v-flex>
         </v-layout>
       </v-container>
@@ -136,7 +136,7 @@
               </v-card>
             </v-dialog>
             <v-slide-y-transition>
-              <div v-if="descriptionCurrLocale && access" v-html="descriptionCurrLocale"/>
+              <div v-if="descriptionCurrLocale && access" v-html="descriptionCurrLocale" />
             </v-slide-y-transition>
 
             <p class="font-italic caption mb-0">{{locale.catalogContraindications}}</p>
@@ -153,7 +153,7 @@
           >
             <v-carousel-item lazy v-for="(item,i) in img" :key="i">
               <div class="slide-wrapper">
-                <img v-lazy="imageBaseUrl+item.url">
+                <img v-lazy="imageBaseUrl+item.url" />
               </div>
             </v-carousel-item>
           </v-carousel>
@@ -205,21 +205,21 @@
 
             <div id="sostav" v-if="sostav">
               <p class="font-weight-bold">Состав</p>
-              <div v-html="sostav"/>
+              <div v-html="sostav" />
             </div>
 
             <div id="opisanie" v-if="opisanie">
               <p class="font-weight-bold">Описание</p>
-              <div v-html="opisanie"/>
+              <div v-html="opisanie" />
             </div>
 
             <div id="farmakoterapevticheskayaGruppa" v-if="farmakoterapevticheskayaGruppa">
               <p class="font-weight-bold">Фармакотерапевтическая группа</p>
-              <p v-text="farmakoterapevticheskayaGruppa"/>
+              <p v-text="farmakoterapevticheskayaGruppa" />
             </div>
             <p id="kodATX" v-if="kodATX">
               <strong>Код:</strong>
-              <span v-text="kodATX"/>
+              <span v-text="kodATX" />
             </p>
             <p
               v-if="farmakodinamika || farmakokinetika"
@@ -227,86 +227,86 @@
             >Фармакологические свойства</p>
             <div id="farmakodinamika" v-if="farmakodinamika">
               <p class="font-weight-bold">Фармакодинамика</p>
-              <div v-html="farmakodinamika"/>
+              <div v-html="farmakodinamika" />
             </div>
             <div id="farmakokinetika" v-if="farmakokinetika">
               <p class="font-weight-bold">Фармакокинетика</p>
-              <div v-html="farmakokinetika"/>
+              <div v-html="farmakokinetika" />
             </div>
             <div id="pokazaniya" v-if="pokazaniya">
               <p class="font-weight-bold">Показания для применения</p>
-              <div v-html="pokazaniya"/>
+              <div v-html="pokazaniya" />
             </div>
             <div id="protivopokazaniya" v-if="protivopokazaniya">
               <p class="font-weight-bold">Противопоказания для применения</p>
-              <div v-html="protivopokazaniya"/>
+              <div v-html="protivopokazaniya" />
             </div>
 
             <div id="meryPredostorozhnosti" v-if="meryPredostorozhnosti">
               <p class="font-weight-bold">Меры предосторожности при применении</p>
-              <div v-html="meryPredostorozhnosti"/>
+              <div v-html="meryPredostorozhnosti" />
             </div>
             <div id="priBeremennosti" v-if="priBeremennosti">
               <p class="font-weight-bold">Применение во время беременности и грудного вскармливания:</p>
-              <div v-html="priBeremennosti"/>
+              <div v-html="priBeremennosti" />
             </div>
 
             <div id="sposobPrimeneniyaDozy" v-if="sposobPrimeneniyaDozy">
               <p class="font-weight-bold">Способ применения и дозы:</p>
-              <div v-html="sposobPrimeneniyaDozy"/>
+              <div v-html="sposobPrimeneniyaDozy" />
             </div>
             <div id="peredozirovka" v-if="peredozirovka">
               <p class="font-weight-bold">Передозировка</p>
-              <div v-html="peredozirovka"/>
+              <div v-html="peredozirovka" />
             </div>
             <div id="pobochnoeDeystvie" v-if="pobochnoeDeystvie">
               <p class="font-weight-bold">Побочное действие</p>
-              <div v-html="pobochnoeDeystvie"/>
+              <div v-html="pobochnoeDeystvie" />
             </div>
             <div id="vzaimodeystvieSDrugimiPreparatami" v-if="vzaimodeystvieSDrugimiPreparatami">
               <p class="font-weight-bold">Взаимодействие с другими лекарственными препаратами</p>
-              <div v-html="vzaimodeystvieSDrugimiPreparatami"/>
+              <div v-html="vzaimodeystvieSDrugimiPreparatami" />
             </div>
             <div id="osobyeUkazaniya" v-if="osobyeUkazaniya">
               <p class="font-weight-bold">Особые указания</p>
-              <div v-html="osobyeUkazaniya"/>
+              <div v-html="osobyeUkazaniya" />
             </div>
             <div id="vliyanieNaAvtomobil" v-if="vliyanieNaAvtomobil">
               <p
                 class="font-weight-bold"
               >Влияние на способность управления автотранспортом и механизмами</p>
-              <div v-html="vliyanieNaAvtomobil"/>
+              <div v-html="vliyanieNaAvtomobil" />
             </div>
             <div id="formaVypuska" v-if="formaVypuska">
               <p class="font-weight-bold">Форма выпуска</p>
-              <div v-html="formaVypuska"/>
+              <div v-html="formaVypuska" />
             </div>
             <div id="usloviyaHraneniya" v-if="usloviyaHraneniya">
               <p class="font-weight-bold">Условия хранения</p>
-              <div v-html="usloviyaHraneniya"/>
+              <div v-html="usloviyaHraneniya" />
             </div>
             <div id="srokGodnosti" v-if="srokGodnosti">
               <p class="font-weight-bold">Срок годности</p>
-              <div v-html="srokGodnosti"/>
+              <div v-html="srokGodnosti" />
             </div>
             <div
               id="vladelecRegistracionnogoUdostovereniya"
               v-if="vladelecRegistracionnogoUdostovereniya"
             >
               <p class="font-weight-bold">Владелец регистрационного удостоверения</p>
-              <div v-html="vladelecRegistracionnogoUdostovereniya"/>
+              <div v-html="vladelecRegistracionnogoUdostovereniya" />
             </div>
             <div id="proizvoditel" v-if="proizvoditel">
               <div class="font-weight-bold mb-3">Производитель</div>
-              <div v-html="proizvoditel"/>
+              <div v-html="proizvoditel" />
             </div>
             <div id="upakovkaKontrol" v-if="upakovkaKontrol">
               <p class="font-weight-bold">Расфасовано и/или упаковано</p>
-              <div v-html="upakovkaKontrol"/>
+              <div v-html="upakovkaKontrol" />
             </div>
             <div id="adresPretenziy" v-if="adresPretenziy">
               <p class="font-weight-bold">Организация принимающая претензии</p>
-              <div v-html="adresPretenziy"/>
+              <div v-html="adresPretenziy" />
             </div>
           </v-tab-item>
           <v-tab v-if="pill.Articles && pill.Articles.length > 0" ripple>Научные публикации</v-tab>
@@ -362,7 +362,7 @@
                 v-lazy="imageBaseUrl+ item.pharmacy.img.url"
                 :alt="item.pharmacy.name"
                 :title="item.pharmacy.name"
-              >
+              />
             </a>
           </div>
         </v-layout>
@@ -396,14 +396,14 @@
             <div class="flex xs12 md6">
               <h2 class="mb-4" data-aos="fade-in">{{locale.catalogAboutManufacturer}}</h2>.
               <div class="manufacturer-content">
-                <h3 class="display-4 mb-4" data-aos="fade-in" v-text="manufacturerTitleCurrLocale"/>
+                <h3 class="display-4 mb-4" data-aos="fade-in" v-text="manufacturerTitleCurrLocale" />
                 <div class="img-wrapper" data-aos="fade-in" v-if="pill.manufacturer.img">
                   <img
                     class="mb-4"
                     v-lazy="imageBaseUrl+pill.manufacturer.img.url"
                     :alt="manufacturerTitleCurrLocale"
                     style="display: block; width: 100%; border: 1px solid #919899; border-radius: 15px;"
-                  >
+                  />
                 </div>
                 <div
                   class="font-weight-medium"
@@ -704,7 +704,7 @@ export default {
             sort: "itemsOrder:ask"
             where: { slug: ["story", "charity", "mission", "team"] }
           ) {
-            title_en
+            title
             slug
           }
           bgPage: pages(where: { slug: "catalog" }) {
@@ -766,7 +766,7 @@ export default {
               img {
                 url
               }
-              forms {
+              forms(sort: "title:ask") {
                 title
                 slug
               }
